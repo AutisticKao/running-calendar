@@ -1,57 +1,38 @@
 <template>
   <div class="app-wrapper">
-    <header class="oxy-header">
-      <div class="header-topbar">
-        <div class="container topbar-inner">
-          <div class="topbar-left">
-            <div class="topbar-item">
-              <span>KALENDER RESMI EVENT LARI INDONESIA 2018 - 2026</span>
-            </div>
-            <div class="topbar-item hide-mobile">
-              <span class="topbar-badge">LIVE DATABASE SYNC</span>
-            </div>
+    <header class="site-header">
+      <div class="container header-inner">
+        <div class="brand-wrap">
+          <div class="brand-icon-box">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+            </svg>
           </div>
-          <div class="topbar-right">
-            <div class="topbar-item" :title="healthInfo.supabaseConnected ? 'Terhubung ke PostgreSQL Supabase' : 'Data Seed Aktif'">
-              <span class="hide-mobile">DATABASE:</span>
-              <span class="topbar-badge">
-                {{ healthInfo.supabaseConnected ? 'SUPABASE ONLINE' : 'LOCAL SEED' }}
-              </span>
-            </div>
+          <div class="brand-title-group">
+            <div class="brand-title">Kalender<span>Lari</span></div>
+            <div class="brand-tagline">Direktori lomba lari Indonesia</div>
           </div>
         </div>
-      </div>
 
-      <div class="header-mainnav">
-        <div class="container mainnav-inner">
-          <div class="brand-wrap">
-            <div class="brand-icon-box">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
-              </svg>
-            </div>
-            <div class="brand-title-group">
-              <div class="brand-title">KALENDER<span>LARI</span></div>
-              <div class="brand-tagline">INDONESIA RUNNING DIRECTORY</div>
-            </div>
-          </div>
-
-          <div class="mainnav-actions">
-            <button class="btn-wishlist-oxy" @click="isWishlistOpen = true">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-              </svg>
-              <span>TARGET RACE</span>
-              <span class="wishlist-counter-box">{{ bookmarks.length }}</span>
-            </button>
-          </div>
+        <div class="header-status" :title="healthInfo.supabaseConnected ? 'Terhubung ke database live' : 'Menampilkan data cadangan'">
+          <span class="status-dot" :class="{ live: healthInfo.supabaseConnected }"></span>
+          <span class="hide-mobile">{{ healthInfo.supabaseConnected ? 'Data live' : 'Data lokal' }}</span>
         </div>
+
+        <button class="btn-wishlist" @click="isWishlistOpen = true">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
+          <span class="hide-mobile">Target race</span>
+          <span class="wishlist-counter">{{ bookmarks.length }}</span>
+        </button>
       </div>
     </header>
 
     <main>
       <CountdownHero
         :featured-event="stats?.nextBigEvent || events[0]"
+        :is-live="healthInfo.supabaseConnected"
         @select-featured="openEventDetail"
       />
 
@@ -71,52 +52,51 @@
         @toggle-sort="toggleSort"
       />
 
-      <section class="events-section">
+      <section class="events-section" id="events-section">
         <div class="container">
           <div class="results-header">
-            <div class="oxy-section-title">
-              <span class="oxy-subtitle">KATALOG PERLOMBAAN RESMI</span>
-              <h2 class="oxy-heading">
-                JADWAL EVENT LARI {{ selectedYear }}
-                <span v-if="selectedCategory !== 'all'" class="heading-accent"> / {{ selectedCategory }}</span>
-                <span v-if="selectedMonth" class="heading-accent"> / BULAN {{ getMonthName(selectedMonth).toUpperCase() }}</span>
+            <div class="results-heading-group">
+              <h2 class="results-heading">
+                Jadwal lomba {{ selectedYear }}
+                <span v-if="selectedCategory !== 'all'" class="heading-accent">· {{ selectedCategory }}</span>
+                <span v-if="selectedMonth" class="heading-accent">· {{ getMonthName(selectedMonth) }}</span>
               </h2>
-              <span class="results-counter">Menampilkan {{ totalRecords.toLocaleString('id-ID') }} agenda perlombaan terverifikasi</span>
+              <span class="results-counter">{{ totalRecords.toLocaleString('id-ID') }} lomba ditemukan</span>
             </div>
 
             <div v-if="hasActiveFilters" class="active-filters">
-              <span v-if="searchQuery" class="filter-chip-oxy">
-                CARI: "{{ searchQuery }}"
-                <button @click="searchQuery = ''">✕</button>
+              <span v-if="searchQuery" class="filter-chip">
+                "{{ searchQuery }}"
+                <button @click="searchQuery = ''" aria-label="Hapus pencarian">✕</button>
               </span>
-              <span v-if="selectedCategory !== 'all'" class="filter-chip-oxy">
+              <span v-if="selectedCategory !== 'all'" class="filter-chip">
                 {{ selectedCategory }}
-                <button @click="selectedCategory = 'all'">✕</button>
+                <button @click="selectedCategory = 'all'" aria-label="Hapus kategori">✕</button>
               </span>
-              <span v-if="selectedMonth" class="filter-chip-oxy">
+              <span v-if="selectedMonth" class="filter-chip">
                 {{ getMonthName(selectedMonth) }}
-                <button @click="selectedMonth = ''">✕</button>
+                <button @click="selectedMonth = ''" aria-label="Hapus bulan">✕</button>
               </span>
-              <button class="btn-clear-all-oxy" @click="resetFilters">RESET FILTER</button>
+              <button class="btn-clear-all" @click="resetFilters">Reset filter</button>
             </div>
           </div>
 
-          <div v-if="isLoading" class="loading-state-oxy">
-            <div class="spinner-oxy"></div>
-            <p>MEMUAT JADWAL EVENT LARI...</p>
+          <div v-if="isLoading" class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat jadwal lomba…</p>
           </div>
 
-          <div v-else-if="events.length === 0" class="empty-results-oxy">
+          <div v-else-if="events.length === 0" class="empty-results">
             <div class="empty-icon-box">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </div>
-            <h3>TIDAK ADA PERLOMBAAN YANG SESUAI</h3>
-            <p>Tidak ada hasil untuk filter yang dipilih. Coba reset filter atau pilih tahun dan kategori lain.</p>
-            <button class="btn-oxy btn-oxy-primary" @click="resetFilters" style="margin-top: 18px;">
-              TAMPILKAN SEMUA LOMBA {{ selectedYear }}
+            <h3>Belum ada lomba yang cocok</h3>
+            <p>Coba ganti filter, atau reset untuk melihat semua jadwal tahun {{ selectedYear }}.</p>
+            <button class="btn btn-primary" @click="resetFilters" style="margin-top: 18px;">
+              Tampilkan semua lomba {{ selectedYear }}
             </button>
           </div>
 
@@ -135,11 +115,11 @@
             <table class="events-table">
               <thead>
                 <tr>
-                  <th>TANGGAL</th>
-                  <th>NAMA PERLOMBAAN</th>
-                  <th>KATEGORI</th>
-                  <th>LOKASI / VENUE</th>
-                  <th style="text-align: right;">AKSI</th>
+                  <th>Tanggal</th>
+                  <th>Nama lomba</th>
+                  <th>Kategori</th>
+                  <th>Lokasi</th>
+                  <th style="text-align: right;">Aksi</th>
                 </tr>
               </thead>
               <tbody>
@@ -153,7 +133,7 @@
                         {{ evt.title }}
                       </span>
                       <span v-if="evt.is_featured" class="badge-featured-mini">
-                        HIGHLIGHT
+                        Unggulan
                       </span>
                     </div>
                   </td>
@@ -167,15 +147,16 @@
                     <div class="table-actions-cell">
                       <button
                         class="btn-table-bookmark"
-                        :title="isBookmarked(evt) ? 'Hapus dari Target' : 'Simpan ke Target'"
+                        :class="{ bookmarked: isBookmarked(evt) }"
+                        :title="isBookmarked(evt) ? 'Hapus dari target' : 'Simpan ke target'"
                         @click="toggleBookmark(evt)"
                       >
-                        <svg width="15" height="15" viewBox="0 0 24 24" :fill="isBookmarked(evt) ? '#FF5E13' : 'none'" stroke="currentColor" stroke-width="2">
+                        <svg width="15" height="15" viewBox="0 0 24 24" :fill="isBookmarked(evt) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
                           <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
                         </svg>
                       </button>
                       <button class="btn-table-detail" @click="openEventDetail(evt)">
-                        DETAIL ↗
+                        Detail
                       </button>
                     </div>
                   </td>
@@ -184,25 +165,25 @@
             </table>
           </div>
 
-          <div v-if="totalPages > 1" class="pagination-bar-oxy">
+          <div v-if="totalPages > 1" class="pagination-bar">
             <button
-              class="btn-page-oxy"
+              class="btn-page"
               :disabled="currentPage === 1"
               @click="goToPage(currentPage - 1)"
             >
-              ← SEBELUMNYA
+              Sebelumnya
             </button>
 
-            <span class="page-info-oxy">
-              HALAMAN <strong>{{ currentPage }}</strong> DARI <strong>{{ totalPages }}</strong>
+            <span class="page-info">
+              Halaman <strong>{{ currentPage }}</strong> dari <strong>{{ totalPages }}</strong>
             </span>
 
             <button
-              class="btn-page-oxy"
+              class="btn-page"
               :disabled="currentPage === totalPages"
               @click="goToPage(currentPage + 1)"
             >
-              SELANJUTNYA →
+              Selanjutnya
             </button>
           </div>
         </div>
@@ -225,7 +206,7 @@
     />
 
     <transition name="toast-fade">
-      <div v-if="toastMessage" class="toast-popup-oxy">
+      <div v-if="toastMessage" class="toast-popup">
         <div class="toast-indicator"></div>
         <span>{{ toastMessage }}</span>
       </div>
@@ -415,10 +396,10 @@ function toggleBookmark(event) {
   const idx = bookmarks.value.findIndex(b => b.detail_url === event.detail_url);
   if (idx !== -1) {
     bookmarks.value.splice(idx, 1);
-    showToast(`"${event.title}" dihapus dari Target Race.`);
+    showToast(`"${event.title}" dihapus dari target race.`);
   } else {
     bookmarks.value.push(event);
-    showToast(`"${event.title}" ditambahkan ke Target Race!`);
+    showToast(`"${event.title}" ditambahkan ke target race.`);
   }
   saveBookmarks();
 }
@@ -443,8 +424,110 @@ main {
   flex: 1;
 }
 
-.events-section {
-  padding: 50px 0 80px;
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--paper);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.header-inner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-top: 14px;
+  padding-bottom: 14px;
+}
+
+.brand-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.brand-icon-box {
+  width: 36px;
+  height: 36px;
+  background-color: var(--accent);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  flex-shrink: 0;
+}
+
+.brand-title-group {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.brand-title {
+  font-family: var(--font-heading);
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--ink);
+}
+
+.brand-title span {
+  color: var(--accent);
+}
+
+.brand-tagline {
+  font-size: 0.76rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.header-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin-left: auto;
+  font-size: 0.82rem;
+  color: var(--text-body);
+  padding: 6px 12px;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink-faint);
+}
+
+.status-dot.live {
+  background: var(--trail);
+  box-shadow: 0 0 0 3px var(--trail-soft);
+}
+
+.btn-wishlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--ink);
+  color: #FFFFFF;
+  padding: 9px 16px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.btn-wishlist:hover {
+  background-color: var(--accent);
+}
+
+.wishlist-counter {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding: 1px 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  border-radius: var(--radius-pill);
 }
 
 @media (max-width: 640px) {
@@ -453,25 +536,33 @@ main {
   }
 }
 
+.events-section {
+  padding: 44px 0 80px;
+}
+
 .results-header {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
   gap: 20px;
-  margin-bottom: 32px;
-  border-bottom: 2px solid var(--border-color);
+  margin-bottom: 28px;
   padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.results-heading {
+  font-size: 1.5rem;
+  font-weight: 600;
 }
 
 .heading-accent {
-  color: var(--oxy-orange);
+  color: var(--accent);
 }
 
 .results-counter {
-  font-size: 0.88rem;
-  color: var(--text-body);
-  font-weight: 600;
+  font-size: 0.9rem;
+  color: var(--text-muted);
   display: block;
   margin-top: 4px;
 }
@@ -483,110 +574,157 @@ main {
   gap: 8px;
 }
 
-.filter-chip-oxy {
-  background: var(--oxy-navy);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 5px 12px;
+.filter-chip {
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.82rem;
+  font-weight: 500;
+  padding: 6px 12px;
   display: flex;
   align-items: center;
   gap: 8px;
-  border-radius: 0px;
-  border-left: 2px solid var(--oxy-orange);
+  border-radius: var(--radius-pill);
 }
 
-.filter-chip-oxy button {
-  color: var(--oxy-orange);
+.filter-chip button {
+  color: var(--text-muted);
   font-size: 0.85rem;
-  font-weight: bold;
 }
 
-.btn-clear-all-oxy {
-  font-family: var(--font-heading);
+.filter-chip button:hover {
+  color: var(--accent);
+}
+
+.btn-clear-all {
   font-size: 0.82rem;
-  font-weight: 700;
-  color: var(--oxy-orange);
-  letter-spacing: 0.06em;
-  padding: 5px 10px;
-  border: 1px solid var(--oxy-orange);
-  background: transparent;
+  font-weight: 600;
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: var(--radius-pill);
   transition: var(--transition-fast);
 }
 
-.btn-clear-all-oxy:hover {
-  background: var(--oxy-orange);
+.btn-clear-all:hover {
+  background: var(--accent-soft);
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  padding: 11px 22px;
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.btn-primary {
+  background-color: var(--accent);
   color: #FFFFFF;
 }
 
-.loading-state-oxy {
-  text-align: center;
-  padding: 80px 20px;
-  color: var(--oxy-navy);
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
+.btn-primary:hover {
+  background-color: var(--accent-dark);
 }
 
-.spinner-oxy {
-  width: 44px;
-  height: 44px;
-  border: 4px solid var(--border-color);
-  border-top-color: var(--oxy-orange);
+.loading-state {
+  text-align: center;
+  padding: 80px 20px;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--border-color);
+  border-top-color: var(--accent);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin: 0 auto 18px;
+  margin: 0 auto 16px;
 }
 
 @keyframes spin {
   to { transform: rotate(360deg); }
 }
 
-.empty-results-oxy {
+.empty-results {
   text-align: center;
-  padding: 60px 24px;
-  max-width: 580px;
+  padding: 56px 24px;
+  max-width: 480px;
   margin: 0 auto;
-  background: #FFFFFF;
+  background: var(--paper);
   border: 1px solid var(--border-color);
-  border-top: 4px solid var(--oxy-orange);
-  border-radius: 0px;
-  box-shadow: var(--shadow-card);
+  border-radius: var(--radius-lg);
 }
 
-.empty-results-oxy h3 {
-  font-family: var(--font-heading);
-  font-size: 1.35rem;
-  font-weight: 800;
-  color: var(--oxy-navy);
-  margin-bottom: 8px;
+.empty-results h3 {
+  font-size: 1.2rem;
+  margin-bottom: 6px;
 }
 
-.empty-results-oxy p {
-  color: var(--text-body);
-  font-size: 0.95rem;
+.empty-results p {
+  color: var(--text-muted);
+  font-size: 0.92rem;
 }
 
 .empty-icon-box {
-  width: 60px;
-  height: 60px;
-  margin: 0 auto 18px;
-  background-color: var(--oxy-orange-light);
-  color: var(--oxy-orange);
+  width: 52px;
+  height: 52px;
+  margin: 0 auto 16px;
+  background-color: var(--surface);
+  color: var(--text-muted);
   display: flex;
   align-items: center;
   justify-content: center;
+  border-radius: 50%;
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: var(--paper);
+}
+
+.events-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.events-table th {
+  background-color: var(--surface);
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 12px 18px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.events-table td {
+  padding: 15px 18px;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.92rem;
+  color: var(--text-body);
+}
+
+.events-table tr:last-child td {
+  border-bottom: none;
+}
+
+.events-table tr:hover td {
+  background-color: var(--surface);
 }
 
 .table-date {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.92rem;
-  color: var(--oxy-orange);
+  font-weight: 600;
+  color: var(--accent);
   white-space: nowrap;
+  font-size: 0.85rem;
 }
 
 .table-title-group {
@@ -596,37 +734,32 @@ main {
 }
 
 .table-title {
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 1.05rem;
+  font-weight: 600;
   cursor: pointer;
-  color: var(--oxy-navy);
-  letter-spacing: 0.02em;
+  color: var(--ink);
   transition: var(--transition-fast);
 }
 
 .table-title:hover {
-  color: var(--oxy-orange);
+  color: var(--accent);
 }
 
 .badge-featured-mini {
-  background: var(--oxy-orange);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 0.65rem;
-  font-weight: 800;
-  padding: 2px 6px;
-  letter-spacing: 0.06em;
+  background: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: var(--radius-pill);
 }
 
 .table-cat-badge {
-  background: #EBF0F8;
-  color: var(--oxy-navy);
-  font-family: var(--font-heading);
-  font-size: 0.76rem;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-left: 2px solid var(--oxy-navy);
+  background: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: var(--radius-pill);
 }
 
 .table-loc {
@@ -642,104 +775,103 @@ main {
 }
 
 .btn-table-bookmark {
-  background: #FFFFFF;
+  background: var(--paper);
   border: 1px solid var(--border-color);
   width: 32px;
   height: 32px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--oxy-navy);
+  color: var(--ink-faint);
   transition: var(--transition-fast);
 }
 
 .btn-table-bookmark:hover {
-  border-color: var(--oxy-orange);
-  background: var(--oxy-orange-light);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.btn-table-bookmark.bookmarked {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-soft);
 }
 
 .btn-table-detail {
-  font-family: var(--font-heading);
-  font-size: 0.78rem;
-  font-weight: 700;
-  color: #FFFFFF;
-  background: var(--oxy-navy);
-  padding: 7px 12px;
-  letter-spacing: 0.05em;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--surface);
+  padding: 7px 14px;
+  border-radius: var(--radius-pill);
   transition: var(--transition-fast);
 }
 
 .btn-table-detail:hover {
-  background: var(--oxy-orange);
-}
-
-.pagination-bar-oxy {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 20px;
-  margin-top: 48px;
-}
-
-.btn-page-oxy {
-  background: #FFFFFF;
-  border: 1px solid var(--oxy-navy);
-  color: var(--oxy-navy);
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.06em;
-  padding: 10px 22px;
-  border-radius: 0px;
-  transition: var(--transition-fast);
-}
-
-.btn-page-oxy:hover:not(:disabled) {
-  background: var(--oxy-navy);
+  background: var(--ink);
   color: #FFFFFF;
 }
 
-.btn-page-oxy:disabled {
-  opacity: 0.35;
+.pagination-bar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  margin-top: 40px;
+}
+
+.btn-page {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  color: var(--ink);
+  font-weight: 600;
+  font-size: 0.88rem;
+  padding: 9px 18px;
+  border-radius: var(--radius-pill);
+  transition: var(--transition-fast);
+}
+
+.btn-page:hover:not(:disabled) {
+  border-color: var(--ink);
+}
+
+.btn-page:disabled {
+  opacity: 0.4;
   cursor: not-allowed;
 }
 
-.page-info-oxy {
-  font-family: var(--font-heading);
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--text-body);
-  letter-spacing: 0.04em;
+.page-info {
+  font-size: 0.88rem;
+  color: var(--text-muted);
 }
 
-.page-info-oxy strong {
-  color: var(--oxy-navy);
-  font-weight: 800;
+.page-info strong {
+  color: var(--ink);
 }
 
-.toast-popup-oxy {
+.toast-popup {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 28px;
+  right: 28px;
   z-index: 1000;
-  background: var(--oxy-navy);
+  background: var(--ink);
   color: #FFFFFF;
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 14px 22px;
-  border-left: 4px solid var(--oxy-orange);
-  box-shadow: 0 10px 30px rgba(0, 23, 61, 0.3);
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.95rem;
-  letter-spacing: 0.04em;
+  padding: 13px 20px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-hover);
+  font-weight: 500;
+  font-size: 0.9rem;
 }
 
 .toast-indicator {
-  width: 8px;
-  height: 8px;
-  background: var(--oxy-orange);
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
 }
 
 .toast-fade-enter-active, .toast-fade-leave-active {

@@ -1,13 +1,8 @@
 <template>
-  <div class="oxy-filter-section" id="events-section">
+  <div class="filter-section">
     <div class="container">
-      <div class="oxy-section-title">
-        <span class="oxy-subtitle">KATALOG LOMBA</span>
-        <h2 class="oxy-heading">Jadwal Event Lari Indonesia</h2>
-      </div>
-
       <div class="year-tabs-bar">
-        <span class="filter-headline">PILIH TAHUN:</span>
+        <span class="filter-headline">Tahun</span>
         <div class="tabs-scroll-wrap">
           <button
             v-for="yr in years"
@@ -17,27 +12,28 @@
             @click="$emit('update:selectedYear', yr)"
           >
             {{ yr }}
-            <span v-if="yr === '2026'" class="tab-badge">TERKINI</span>
           </button>
         </div>
       </div>
 
       <div class="filter-controls-card">
         <div class="search-form-wrap">
+          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
           <input
             type="text"
-            placeholder="Cari event, kota (e.g. Bandung, Bali), atau jarak..."
+            placeholder="Cari nama lomba, kota, atau jarak"
             :value="searchQuery"
             @input="$emit('update:searchQuery', $event.target.value)"
-            class="oxy-search-input"
+            class="search-input"
           />
-          <button class="oxy-search-btn">
-            CARI
-          </button>
           <button
             v-if="searchQuery"
             class="search-clear-btn"
             @click="$emit('update:searchQuery', '')"
+            aria-label="Hapus pencarian"
           >
             ✕
           </button>
@@ -47,11 +43,11 @@
           <select
             :value="selectedMonth"
             @change="$emit('update:selectedMonth', $event.target.value)"
-            class="oxy-select-input"
+            class="select-input"
           >
-            <option value="">Semua Bulan (1 - 12)</option>
+            <option value="">Semua bulan</option>
             <option v-for="(mName, idx) in months" :key="idx + 1" :value="idx + 1">
-              Bulan {{ mName }}
+              {{ mName }}
             </option>
           </select>
         </div>
@@ -62,30 +58,41 @@
               class="view-btn"
               :class="{ active: viewMode === 'grid' }"
               @click="$emit('update:viewMode', 'grid')"
+              aria-label="Tampilan grid"
             >
-              GRID
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"></rect>
+                <rect x="14" y="3" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
+                <rect x="14" y="14" width="7" height="7"></rect>
+              </svg>
             </button>
             <button
               class="view-btn"
               :class="{ active: viewMode === 'table' }"
               @click="$emit('update:viewMode', 'table')"
+              aria-label="Tampilan tabel"
             >
-              TABEL
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+              </svg>
             </button>
           </div>
 
           <button
-            class="btn-sort-oxy"
+            class="btn-sort"
             @click="$emit('toggle-sort')"
             :title="sortOrder === 'asc' ? 'Urutkan dari terlama' : 'Urutkan dari terdekat'"
           >
-            <span>{{ sortOrder === 'asc' ? 'URUTKAN: TERDEKAT' : 'URUTKAN: TERLAMA' }}</span>
+            {{ sortOrder === 'asc' ? 'Terdekat dulu' : 'Terlama dulu' }}
           </button>
         </div>
       </div>
 
       <div class="category-tabs-bar">
-        <span class="filter-headline">KATEGORI JARAK:</span>
+        <span class="filter-headline">Jarak</span>
         <div class="category-scroll-wrap">
           <button
             v-for="cat in categories"
@@ -94,7 +101,7 @@
             :class="{ active: selectedCategory === cat.value }"
             @click="$emit('update:selectedCategory', cat.value)"
           >
-            <span>{{ cat.label }}</span>
+            {{ cat.label }}
           </button>
         </div>
       </div>
@@ -147,36 +154,34 @@ const months = [
 ];
 
 const categories = [
-  { label: 'SEMUA KATEGORI', value: 'all' },
+  { label: 'Semua kategori', value: 'all' },
   { label: '5K', value: '5K' },
   { label: '10K', value: '10K' },
-  { label: 'HALF MARATHON (21K)', value: '21K' },
-  { label: 'MARATHON (42K)', value: '42K' },
-  { label: 'TRAIL RUN', value: 'Trail' },
-  { label: 'ULTRA MARATHON', value: 'Ultra' }
+  { label: 'Half marathon (21K)', value: '21K' },
+  { label: 'Marathon (42K)', value: '42K' },
+  { label: 'Trail run', value: 'Trail' },
+  { label: 'Ultra marathon', value: 'Ultra' }
 ];
 </script>
 
 <style scoped>
-.oxy-filter-section {
-  padding: 48px 0 28px;
+.filter-section {
+  padding: 8px 0 32px;
 }
 
 .filter-headline {
-  font-family: var(--font-heading);
-  font-size: 0.88rem;
-  font-weight: 800;
-  color: var(--oxy-navy);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-muted);
   white-space: nowrap;
+  min-width: 44px;
 }
 
 .year-tabs-bar {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
 }
 
 .tabs-scroll-wrap {
@@ -188,123 +193,93 @@ const categories = [
 }
 
 .tab-year-btn {
-  font-family: var(--font-heading);
-  font-size: 1.05rem;
-  font-weight: 700;
-  padding: 8px 18px;
-  background-color: #FFFFFF;
+  font-size: 0.92rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  background-color: transparent;
   color: var(--text-body);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sharp);
+  border-radius: var(--radius-pill);
   transition: var(--transition-fast);
   white-space: nowrap;
 }
 
 .tab-year-btn:hover {
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
-  border-color: var(--oxy-navy);
+  background-color: var(--surface);
 }
 
 .tab-year-btn.active {
-  background-color: var(--oxy-orange);
+  background-color: var(--ink);
   color: #FFFFFF;
-  border-color: var(--oxy-orange);
-  box-shadow: 0 4px 10px rgba(255, 94, 19, 0.3);
-}
-
-.tab-badge {
-  font-size: 0.68rem;
-  padding: 1px 5px;
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
-  margin-left: 6px;
-  vertical-align: middle;
+  font-weight: 600;
 }
 
 .filter-controls-card {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 16px;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
-  border-top: 3px solid var(--oxy-navy);
-  padding: 16px 20px;
-  margin-bottom: 20px;
-  box-shadow: var(--shadow-subtle);
+  gap: 12px;
+  margin-bottom: 18px;
 }
 
 .search-form-wrap {
   flex: 1;
-  min-width: 280px;
+  min-width: 260px;
   display: flex;
+  align-items: center;
+  gap: 8px;
   position: relative;
-}
-
-.oxy-search-input {
-  width: 100%;
-  padding: 11px 16px;
+  background: var(--paper);
   border: 1px solid var(--border-color);
-  border-right: none;
-  font-family: var(--font-body);
-  font-size: 0.95rem;
-  color: var(--text-primary);
-  background-color: var(--bg-main);
-  border-radius: var(--radius-sharp);
+  border-radius: var(--radius-pill);
+  padding: 0 14px;
 }
 
-.oxy-search-input:focus {
+.search-icon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.search-input {
+  flex: 1;
+  width: 100%;
+  padding: 10px 0;
+  font-size: 0.92rem;
+  color: var(--ink);
+  background: transparent;
+}
+
+.search-input:focus {
   outline: none;
-  background-color: #FFFFFF;
-  border-color: var(--oxy-navy);
-}
-
-.oxy-search-btn {
-  background-color: var(--oxy-orange);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.9rem;
-  letter-spacing: 0.08em;
-  padding: 0 20px;
-  border-radius: var(--radius-sharp);
-  transition: var(--transition-fast);
-}
-
-.oxy-search-btn:hover {
-  background-color: var(--oxy-navy);
 }
 
 .search-clear-btn {
-  position: absolute;
-  right: 80px;
-  top: 50%;
-  transform: translateY(-50%);
   color: var(--text-muted);
   font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.search-clear-btn:hover {
+  color: var(--accent);
 }
 
 .month-select-wrap {
   position: relative;
 }
 
-.oxy-select-input {
-  padding: 11px 18px;
+.select-input {
+  padding: 10px 16px;
   border: 1px solid var(--border-color);
-  background-color: var(--bg-main);
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: var(--oxy-navy);
-  border-radius: var(--radius-sharp);
+  background-color: var(--paper);
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--ink);
+  border-radius: var(--radius-pill);
   cursor: pointer;
 }
 
-.oxy-select-input:focus {
+.select-input:focus {
   outline: none;
-  background-color: #FFFFFF;
-  border-color: var(--oxy-navy);
+  border-color: var(--ink);
 }
 
 .action-controls-wrap {
@@ -315,41 +290,40 @@ const categories = [
 
 .view-mode-group {
   display: flex;
-  border: 1px solid var(--border-color);
+  gap: 2px;
+  background: var(--surface);
+  border-radius: var(--radius-pill);
+  padding: 3px;
 }
 
 .view-btn {
-  font-family: var(--font-heading);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 8px 14px;
-  background-color: var(--bg-main);
+  padding: 7px 10px;
   color: var(--text-muted);
+  border-radius: var(--radius-pill);
   transition: var(--transition-fast);
+  display: flex;
 }
 
 .view-btn.active {
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
+  background-color: var(--paper);
+  color: var(--ink);
+  box-shadow: var(--shadow-subtle);
 }
 
-.btn-sort-oxy {
-  font-family: var(--font-heading);
+.btn-sort {
   font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 10px 18px;
-  background-color: #FFFFFF;
+  font-weight: 500;
+  padding: 9px 16px;
+  background-color: var(--paper);
   border: 1px solid var(--border-color);
-  color: var(--oxy-navy);
+  color: var(--ink);
+  border-radius: var(--radius-pill);
   transition: var(--transition-fast);
+  white-space: nowrap;
 }
 
-.btn-sort-oxy:hover {
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
-  border-color: var(--oxy-navy);
+.btn-sort:hover {
+  border-color: var(--ink);
 }
 
 .category-tabs-bar {
@@ -367,30 +341,24 @@ const categories = [
 }
 
 .category-tab-btn {
-  font-family: var(--font-heading);
-  font-size: 0.9rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 6px 14px;
-  background-color: #FFFFFF;
-  color: var(--text-body);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-sharp);
+  font-size: 0.87rem;
+  font-weight: 500;
+  padding: 7px 14px;
+  background-color: var(--surface);
+  color: var(--ink-soft);
+  border-radius: var(--radius-pill);
   white-space: nowrap;
   transition: var(--transition-fast);
 }
 
 .category-tab-btn:hover {
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
-  border-color: var(--oxy-navy);
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
 }
 
 .category-tab-btn.active {
-  background-color: var(--oxy-navy);
+  background-color: var(--accent);
   color: #FFFFFF;
-  border-color: var(--oxy-navy);
-  border-bottom: 3px solid var(--oxy-orange);
 }
 
 @media (max-width: 768px) {

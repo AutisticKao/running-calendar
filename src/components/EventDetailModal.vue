@@ -1,82 +1,81 @@
 <template>
   <div v-if="event" class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal-content oxy-modal-box">
-      <div class="modal-header-oxy">
+    <div class="modal-content modal-box">
+      <div class="modal-header">
         <div class="modal-tag-row">
-          <span class="oxy-spec-badge">TAHUN {{ event.year }}</span>
-          <span v-if="event.is_featured" class="oxy-featured-badge">
-            HIGHLIGHT RACE
+          <span class="spec-badge">{{ event.year }}</span>
+          <span v-if="event.is_featured" class="featured-badge">
+            Lomba unggulan
           </span>
-          <span class="oxy-cat-badge">{{ event.category || 'REGULAR RACE' }}</span>
+          <span class="cat-badge">{{ event.category || 'Umum' }}</span>
         </div>
-        <button class="btn-close-oxy" @click="$emit('close')" aria-label="Tutup">✕</button>
+        <button class="btn-close" @click="$emit('close')" aria-label="Tutup">✕</button>
       </div>
 
       <div class="modal-title-banner">
-        <span class="modal-pretitle">INFORMASI RESMI PERLOMBAAN</span>
         <h2 class="modal-event-title">{{ event.title }}</h2>
       </div>
 
-      <div class="modal-body-oxy">
+      <div class="modal-body">
         <div class="specs-grid">
           <div class="spec-card">
             <div class="spec-icon-box">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
-                <rect x="3" y="4" width="18" height="18" rx="0" ry="0"></rect>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </div>
             <div class="spec-details">
-              <span class="spec-label">JADWAL PELAKSANAAN</span>
-              <span class="spec-val-bold">{{ event.date_text }}</span>
+              <span class="spec-label">Jadwal pelaksanaan</span>
+              <span class="spec-val">{{ event.date_text }}</span>
             </div>
           </div>
 
           <div class="spec-card">
             <div class="spec-icon-box">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
               </svg>
             </div>
             <div class="spec-details">
-              <span class="spec-label">KATEGORI & JARAK</span>
-              <span class="spec-val-bold">{{ event.category || 'Umum / Fun Run' }}</span>
+              <span class="spec-label">Kategori & jarak</span>
+              <span class="spec-val">{{ event.category || 'Umum / fun run' }}</span>
             </div>
           </div>
 
           <div class="spec-card spec-card-full">
             <div class="spec-icon-box">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
             </div>
             <div class="spec-details">
-              <span class="spec-label">VENUE & LOKASI PERLOMBAAN</span>
-              <span class="spec-val-bold">{{ event.location }}</span>
-              <span v-if="event.city" class="spec-city-tag">Kota / Wilayah: {{ event.city }}</span>
+              <span class="spec-label">Venue & lokasi</span>
+              <span class="spec-val">{{ event.location }}</span>
+              <span v-if="event.city" class="spec-city-tag">Kota: {{ event.city }}</span>
               <a
                 :href="mapsUrl"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="maps-action-link"
               >
-                PETUNJUK ARAH GOOGLE MAPS ↗
+                Petunjuk arah di Google Maps
               </a>
             </div>
           </div>
         </div>
 
-        <div class="modal-actions-oxy">
+        <div class="modal-actions">
           <a
             :href="event.detail_url"
             target="_blank"
             rel="noopener noreferrer"
-            class="btn-oxy btn-oxy-primary btn-block-oxy"
+            class="btn btn-primary btn-block"
           >
-            SUMBER RESMI & REGISTRASI ↗
+            Sumber resmi & registrasi
           </a>
 
           <div class="secondary-actions-row">
@@ -84,25 +83,25 @@
               :href="googleCalendarUrl"
               target="_blank"
               rel="noopener noreferrer"
-              class="btn-oxy btn-oxy-secondary flex-1"
+              class="btn btn-secondary flex-1"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18"></rect>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              TAMBAH KE CALENDAR
+              Tambah ke calendar
             </a>
 
             <button
-              class="btn-oxy btn-oxy-navy flex-1"
+              class="btn btn-dark flex-1"
               @click="$emit('toggle-bookmark', event)"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" :fill="isBookmarked ? '#FF5E13' : 'none'" stroke="currentColor" stroke-width="2">
+              <svg width="17" height="17" viewBox="0 0 24 24" :fill="isBookmarked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
-              {{ isBookmarked ? 'HAPUS DARI TARGET' : 'SIMPAN KE TARGET' }}
+              {{ isBookmarked ? 'Hapus dari target' : 'Simpan ke target' }}
             </button>
           </div>
         </div>
@@ -137,8 +136,8 @@ const googleCalendarUrl = computed(() => {
   if (!props.event) return '#';
   const title = encodeURIComponent(props.event.title);
   const location = encodeURIComponent(props.event.location);
-  const details = encodeURIComponent(`Jadwal Event Lari: ${props.event.title}\nKategori: ${props.event.category}\nInfo: ${props.event.detail_url}`);
-  
+  const details = encodeURIComponent(`Jadwal lomba lari: ${props.event.title}\nKategori: ${props.event.category}\nInfo: ${props.event.detail_url}`);
+
   let datesParam = '';
   if (props.event.start_date) {
     const dStr = props.event.start_date.replace(/-/g, '');
@@ -149,20 +148,49 @@ const googleCalendarUrl = computed(() => {
 </script>
 
 <style scoped>
-.oxy-modal-box {
-  background-color: #FFFFFF;
-  border-top: 4px solid var(--oxy-orange);
-  border-radius: 0px;
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background-color: rgba(21, 23, 28, 0.55);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.modal-content {
+  max-width: 640px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: modalIn 0.2s ease-out;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-box {
+  background-color: var(--paper);
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
-.modal-header-oxy {
-  background-color: var(--oxy-navy);
-  padding: 16px 24px;
+.modal-header {
+  padding: 18px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid var(--border-color);
 }
 
 .modal-tag-row {
@@ -172,96 +200,71 @@ const googleCalendarUrl = computed(() => {
   flex-wrap: wrap;
 }
 
-.oxy-spec-badge {
-  background-color: rgba(255, 255, 255, 0.15);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
+.spec-badge {
+  background-color: var(--surface);
+  color: var(--ink-soft);
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
+}
+
+.featured-badge {
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
   font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
-  padding: 3px 10px;
-  border-radius: 0px;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
 }
 
-.oxy-featured-badge {
-  background-color: var(--oxy-orange);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
+.cat-badge {
+  background-color: var(--surface);
+  color: var(--ink-soft);
   font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 3px 10px;
-  border-radius: 0px;
+  font-weight: 600;
+  padding: 4px 11px;
+  border-radius: var(--radius-pill);
 }
 
-.oxy-cat-badge {
-  background-color: #00173D;
-  color: #FF5E13;
-  font-family: var(--font-heading);
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 3px 10px;
-  border-radius: 0px;
-  border: 1px solid rgba(255, 94, 19, 0.4);
-}
-
-.btn-close-oxy {
-  background-color: transparent;
-  color: #FFFFFF;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  width: 32px;
-  height: 32px;
+.btn-close {
+  background-color: var(--surface);
+  color: var(--ink);
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1rem;
-  font-weight: bold;
-  border-radius: 0px;
+  font-size: 0.9rem;
+  border-radius: 50%;
   transition: var(--transition-fast);
 }
 
-.btn-close-oxy:hover {
-  background-color: var(--oxy-orange);
-  border-color: var(--oxy-orange);
+.btn-close:hover {
+  background-color: var(--ink);
+  color: #FFFFFF;
 }
 
 .modal-title-banner {
-  background-color: var(--oxy-navy-dark);
-  padding: 24px 28px;
-  border-bottom: 3px solid var(--oxy-orange);
-}
-
-.modal-pretitle {
-  font-family: var(--font-heading);
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--oxy-orange);
-  letter-spacing: 0.15em;
-  display: block;
-  margin-bottom: 6px;
+  padding: 22px 24px 0;
 }
 
 .modal-event-title {
-  font-family: var(--font-heading);
-  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
-  font-weight: 800;
-  color: #FFFFFF;
-  line-height: 1.25;
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
+  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.3;
 }
 
-.modal-body-oxy {
-  padding: 28px;
-  background-color: #FFFFFF;
+.modal-body {
+  padding: 22px 24px 24px;
 }
 
 .specs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 12px;
+  margin-bottom: 24px;
 }
 
 @media (max-width: 600px) {
@@ -271,13 +274,12 @@ const googleCalendarUrl = computed(() => {
 }
 
 .spec-card {
-  background-color: #F8FAFD;
-  border: 1px solid var(--border-color);
-  border-left: 3px solid var(--oxy-orange);
-  padding: 16px;
+  background-color: var(--surface);
+  border-radius: var(--radius-md);
+  padding: 15px;
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: 12px;
 }
 
 .spec-card-full {
@@ -285,10 +287,11 @@ const googleCalendarUrl = computed(() => {
 }
 
 .spec-icon-box {
-  width: 38px;
-  height: 38px;
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
+  width: 34px;
+  height: 34px;
+  background-color: var(--paper);
+  color: var(--ink);
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -301,19 +304,14 @@ const googleCalendarUrl = computed(() => {
 }
 
 .spec-label {
-  font-family: var(--font-heading);
-  font-size: 0.74rem;
-  font-weight: 700;
+  font-size: 0.76rem;
   color: var(--text-muted);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
 }
 
-.spec-val-bold {
-  font-family: var(--font-body);
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--oxy-navy);
+.spec-val {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--ink);
   margin-top: 2px;
 }
 
@@ -324,35 +322,32 @@ const googleCalendarUrl = computed(() => {
 }
 
 .maps-action-link {
-  font-family: var(--font-heading);
-  font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--oxy-orange);
-  letter-spacing: 0.05em;
-  margin-top: 6px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
+  margin-top: 8px;
   display: inline-block;
-  text-decoration: underline;
 }
 
 .maps-action-link:hover {
-  color: var(--oxy-navy);
+  color: var(--accent-dark);
 }
 
-.modal-actions-oxy {
+.modal-actions {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 10px;
 }
 
-.btn-block-oxy {
+.btn-block {
   width: 100%;
-  padding: 14px 20px;
-  font-size: 1rem;
+  padding: 13px 20px;
+  font-size: 0.95rem;
 }
 
 .secondary-actions-row {
   display: flex;
-  gap: 12px;
+  gap: 10px;
 }
 
 @media (max-width: 540px) {
@@ -363,5 +358,14 @@ const googleCalendarUrl = computed(() => {
 
 .flex-1 {
   flex: 1;
+}
+
+.btn-dark {
+  background-color: var(--ink);
+  color: #FFFFFF;
+}
+
+.btn-dark:hover {
+  background-color: var(--accent);
 }
 </style>

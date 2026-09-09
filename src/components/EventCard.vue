@@ -1,21 +1,21 @@
 <template>
-  <div class="oxy-event-card" :class="{ 'is-featured': event.is_featured }">
+  <div class="event-card" :class="{ 'is-featured': event.is_featured }">
     <div class="card-meta-bar">
-      <div class="date-badge-sharp">
-        <span class="date-text">{{ event.date_text }}</span>
-      </div>
+      <span class="date-badge">{{ event.date_text }}</span>
 
       <div class="meta-bar-right">
-        <span v-if="event.is_featured" class="badge-featured-sharp">
-          HIGHLIGHT
+        <span v-if="event.is_featured" class="badge-featured">
+          Unggulan
         </span>
         <button
-          class="btn-bookmark-sharp"
+          class="btn-bookmark"
           :class="{ bookmarked: isBookmarked }"
           @click.stop="$emit('toggle-bookmark', event)"
-          :title="isBookmarked ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'"
+          :title="isBookmarked ? 'Hapus dari target' : 'Simpan ke target'"
         >
-          {{ isBookmarked ? '★' : '☆' }}
+          <svg width="15" height="15" viewBox="0 0 24 24" :fill="isBookmarked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+          </svg>
         </button>
       </div>
     </div>
@@ -24,7 +24,10 @@
       <h3 class="event-headline">{{ event.title }}</h3>
 
       <div class="event-venue-row">
-        <span class="venue-icon">📍</span>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+          <circle cx="12" cy="10" r="3"></circle>
+        </svg>
         <span class="venue-text">{{ event.location }}</span>
       </div>
     </div>
@@ -33,7 +36,7 @@
       <span
         v-for="(tag, idx) in parsedCategories"
         :key="idx"
-        class="cat-badge-sharp"
+        class="cat-badge"
         :class="getBadgeClass(tag)"
       >
         {{ tag }}
@@ -41,10 +44,9 @@
     </div>
 
     <div class="card-action-footer">
-      <span class="city-indicator">{{ event.city || 'INDONESIA' }}</span>
+      <span class="city-indicator">{{ event.city || 'Indonesia' }}</span>
       <button class="btn-read-more" @click="$emit('select-event', event)">
-        <span>DETAIL RACE</span>
-        <span class="arrow">→</span>
+        Lihat detail
       </button>
     </div>
   </div>
@@ -84,44 +86,37 @@ function getBadgeClass(tag) {
 </script>
 
 <style scoped>
-.oxy-event-card {
-  background-color: #FFFFFF;
+.event-card {
+  background-color: var(--paper);
   border: 1px solid var(--border-color);
-  border-top: 3px solid var(--oxy-navy);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
   position: relative;
   transition: var(--transition-fast);
-  box-shadow: var(--shadow-subtle);
 }
 
-.oxy-event-card:hover {
-  border-top-color: var(--oxy-orange);
-  transform: translateY(-4px);
+.event-card:hover {
+  border-color: var(--ink-faint);
   box-shadow: var(--shadow-hover);
+  transform: translateY(-2px);
 }
 
-.oxy-event-card.is-featured {
-  border-top: 4px solid var(--oxy-orange);
+.event-card.is-featured {
+  border-color: var(--accent);
 }
 
 .card-meta-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 18px;
-  background-color: #FAFBFC;
-  border-bottom: 1px solid var(--border-color);
+  padding: 14px 18px 0;
 }
 
-.date-badge-sharp {
-  background-color: var(--oxy-orange);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 3px 10px;
+.date-badge {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--accent);
 }
 
 .meta-bar-right {
@@ -130,170 +125,136 @@ function getBadgeClass(tag) {
   gap: 8px;
 }
 
-.badge-featured-sharp {
-  background-color: var(--oxy-navy);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  padding: 2px 8px;
+.badge-featured {
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
 }
 
-.btn-bookmark-sharp {
+.btn-bookmark {
   width: 28px;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: #FFFFFF;
-  border: 1px solid var(--border-color);
-  font-size: 1.1rem;
+  background-color: var(--surface);
+  border-radius: var(--radius-sm);
   color: var(--text-muted);
   transition: var(--transition-fast);
 }
 
-.btn-bookmark-sharp:hover,
-.btn-bookmark-sharp.bookmarked {
-  background-color: var(--oxy-navy);
-  color: var(--oxy-orange);
-  border-color: var(--oxy-navy);
+.btn-bookmark:hover,
+.btn-bookmark.bookmarked {
+  background-color: var(--accent-soft);
+  color: var(--accent);
 }
 
-/* Content Area */
 .card-content-area {
-  padding: 20px 20px 14px;
+  padding: 12px 18px 12px;
   flex: 1;
   cursor: pointer;
 }
 
 .event-headline {
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--oxy-navy);
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--ink);
   line-height: 1.3;
-  margin-bottom: 10px;
-  letter-spacing: 0.02em;
+  margin-bottom: 8px;
   transition: var(--transition-fast);
 }
 
 .card-content-area:hover .event-headline {
-  color: var(--oxy-orange);
+  color: var(--accent);
 }
 
 .event-venue-row {
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 0.88rem;
-  color: var(--text-body);
+  font-size: 0.86rem;
+  color: var(--text-muted);
 }
 
-.venue-icon {
-  font-size: 0.9rem;
-  opacity: 0.7;
+.event-venue-row svg {
+  flex-shrink: 0;
+  margin-top: 2px;
 }
 
 .venue-text {
   line-height: 1.4;
 }
 
-/* Category Badges */
 .category-badges-row {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  padding: 0 20px 18px;
+  padding: 0 18px 16px;
 }
 
-.cat-badge-sharp {
-  font-family: var(--font-heading);
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.05em;
-  padding: 2px 8px;
-  background-color: var(--bg-main);
-  border: 1px solid var(--border-color);
-  color: var(--text-body);
+.cat-badge {
+  font-size: 0.74rem;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: var(--radius-pill);
+  background-color: var(--surface);
+  color: var(--ink-soft);
 }
 
 .cat-marathon {
-  background-color: #FFF2EB;
-  border-color: #FFD4C2;
-  color: var(--oxy-orange-dark);
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
 }
 
 .cat-half {
-  background-color: #EEF4FF;
-  border-color: #BFD7FE;
-  color: var(--oxy-navy);
+  background-color: #E4EEFA;
+  color: #164A83;
 }
 
 .cat-10k {
-  background-color: #EDFDF7;
-  border-color: #A3F3D2;
-  color: #059669;
+  background-color: var(--trail-soft);
+  color: var(--trail-ink);
 }
 
 .cat-5k {
-  background-color: #FEF9EB;
-  border-color: #FDE8A5;
-  color: #B45309;
+  background-color: #FBF1DC;
+  color: #7A5710;
 }
 
 .cat-trail {
-  background-color: #F5F3FF;
-  border-color: #DDD6FE;
-  color: #6D28D9;
+  background-color: #EFE7FB;
+  color: #4B2A8C;
 }
 
 .cat-ultra {
-  background-color: #FDF2F8;
-  border-color: #FBCFE8;
-  color: #BE185D;
+  background-color: #FBE3F0;
+  color: #7C1256;
 }
 
-/* Footer */
 .card-action-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 20px;
-  background-color: #FAFBFC;
+  padding: 14px 18px;
   border-top: 1px solid var(--border-color);
 }
 
 .city-indicator {
-  font-family: var(--font-heading);
   font-size: 0.8rem;
-  font-weight: 700;
-  letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
 .btn-read-more {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  font-family: var(--font-heading);
   font-size: 0.85rem;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  color: var(--oxy-navy);
-  transition: var(--transition-fast);
-}
-
-.btn-read-more .arrow {
-  color: var(--oxy-orange);
-  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
   transition: var(--transition-fast);
 }
 
 .btn-read-more:hover {
-  color: var(--oxy-orange);
-}
-
-.btn-read-more:hover .arrow {
-  transform: translateX(4px);
+  color: var(--accent);
 }
 </style>

@@ -1,36 +1,31 @@
 <template>
-  <div class="oxy-hero-section">
+  <div class="hero-section">
     <div class="container hero-container">
       <div class="hero-left-content">
-        <div class="hero-tagline">
-          <span class="tagline-bar"></span>
-          <span>DATABASE EVENT LARI TERBESAR DI INDONESIA</span>
-        </div>
-
         <h1 class="hero-main-title">
-          Jadwal Lengkap &amp; <br />
-          <span>Kalender Lari Indonesia</span>
+          Temukan lomba lari berikutnya,<br />
+          <span>dari 5K sampai ultra trail</span>
         </h1>
 
         <p class="hero-description">
-          Akses informasi terpercaya jadwal race lari di seluruh nusantara dari kategori 5K, 10K, Half Marathon, Full Marathon, hingga Ultra Trail Run (Arsip Resmi 2018 - 2026).
+          Jadwal lomba lari di seluruh Indonesia, dari 5K, 10K, half marathon, marathon, hingga ultra trail. Arsip resmi 2018 sampai 2026.
         </p>
 
         <div class="hero-button-group">
-          <a href="#events-section" class="btn-oxy btn-oxy-primary">
-            JELAJAHI JADWAL LARI ↓
+          <a href="#events-section" class="btn btn-primary">
+            Jelajahi jadwal lomba
           </a>
           <div class="hero-sync-badge">
-            <span class="sync-dot"></span>
-            <span>Update Otomatis Tiap 48 Jam</span>
+            <span class="sync-dot" :class="{ live: isLive }"></span>
+            <span>{{ isLive ? 'Data live, sinkron tiap 48 jam' : 'Menampilkan data cadangan' }}</span>
           </div>
         </div>
       </div>
 
       <div v-if="featuredEvent" class="featured-showcase-box">
         <div class="showcase-top-header">
-          <span class="showcase-badge">HIGHLIGHT EVENT</span>
-          <span class="showcase-year">TAHUN {{ featuredEvent.year }}</span>
+          <span class="showcase-badge">Lomba unggulan</span>
+          <span class="showcase-year">{{ featuredEvent.year }}</span>
         </div>
 
         <div class="showcase-body">
@@ -38,47 +33,44 @@
 
           <div class="showcase-meta-grid">
             <div class="meta-row">
-              <span class="meta-label">TANGGAL:</span>
+              <span class="meta-label">Tanggal</span>
               <span class="meta-val">{{ featuredEvent.date_text }}</span>
             </div>
             <div class="meta-row">
-              <span class="meta-label">LOKASI:</span>
+              <span class="meta-label">Lokasi</span>
               <span class="meta-val">{{ featuredEvent.location }}</span>
             </div>
             <div class="meta-row">
-              <span class="meta-label">KATEGORI:</span>
+              <span class="meta-label">Kategori</span>
               <span class="meta-val highlight-cat">{{ featuredEvent.category }}</span>
             </div>
           </div>
 
-          <div class="oxy-timer-wrapper">
+          <div class="timer-wrapper">
             <div class="timer-unit">
               <span class="unit-number">{{ timeLeft.days }}</span>
-              <span class="unit-name">HARI</span>
+              <span class="unit-name">hari</span>
             </div>
-            <div class="timer-separator">:</div>
             <div class="timer-unit">
               <span class="unit-number">{{ pad(timeLeft.hours) }}</span>
-              <span class="unit-name">JAM</span>
+              <span class="unit-name">jam</span>
             </div>
-            <div class="timer-separator">:</div>
             <div class="timer-unit">
               <span class="unit-number">{{ pad(timeLeft.minutes) }}</span>
-              <span class="unit-name">MENIT</span>
+              <span class="unit-name">menit</span>
             </div>
-            <div class="timer-separator">:</div>
             <div class="timer-unit">
               <span class="unit-number">{{ pad(timeLeft.seconds) }}</span>
-              <span class="unit-name">DETIK</span>
+              <span class="unit-name">detik</span>
             </div>
           </div>
 
           <div class="showcase-actions">
-            <button class="btn-oxy btn-oxy-primary" @click="$emit('select-featured', featuredEvent)">
-              LIHAT DETAIL LOMBA →
+            <button class="btn btn-primary" @click="$emit('select-featured', featuredEvent)">
+              Lihat detail lomba
             </button>
-            <a :href="featuredEvent.detail_url" target="_blank" rel="noopener noreferrer" class="btn-oxy btn-oxy-secondary">
-              INFO SUMBER ↗
+            <a :href="featuredEvent.detail_url" target="_blank" rel="noopener noreferrer" class="btn btn-secondary">
+              Info sumber
             </a>
           </div>
         </div>
@@ -94,6 +86,10 @@ const props = defineProps({
   featuredEvent: {
     type: Object,
     default: null
+  },
+  isLive: {
+    type: Boolean,
+    default: false
   }
 });
 
@@ -150,18 +146,16 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.oxy-hero-section {
-  background: linear-gradient(135deg, #00173D 0%, #00225A 60%, #0B3278 100%);
-  padding: 60px 0;
-  border-bottom: 4px solid var(--oxy-orange);
-  position: relative;
-  overflow: hidden;
+.hero-section {
+  background: var(--paper);
+  padding: 56px 0 64px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .hero-container {
   display: grid;
-  grid-template-columns: 1.1fr 1fr;
-  gap: 40px;
+  grid-template-columns: 1.05fr 0.95fr;
+  gap: 48px;
   align-items: center;
 }
 
@@ -172,44 +166,24 @@ onUnmounted(() => {
   }
 }
 
-.hero-tagline {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--oxy-orange);
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  margin-bottom: 16px;
-}
-
-.tagline-bar {
-  width: 24px;
-  height: 3px;
-  background-color: var(--oxy-orange);
-}
-
 .hero-main-title {
-  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
-  font-weight: 800;
-  color: #FFFFFF;
-  line-height: 1.1;
-  margin-bottom: 20px;
-  letter-spacing: 0.02em;
+  font-size: clamp(2rem, 4vw, 2.9rem);
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.15;
+  margin-bottom: 18px;
 }
 
 .hero-main-title span {
-  color: var(--oxy-orange);
+  color: var(--accent);
 }
 
 .hero-description {
   font-size: 1.05rem;
-  color: #CBD5E1;
-  max-width: 540px;
+  color: var(--text-body);
+  max-width: 480px;
   line-height: 1.6;
-  margin-bottom: 30px;
+  margin-bottom: 28px;
 }
 
 .hero-button-group {
@@ -223,73 +197,68 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #E2E8F0;
+  color: var(--text-muted);
   font-size: 0.86rem;
-  font-weight: 600;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 8px 16px;
-  border: 1px solid rgba(255, 255, 255, 0.15);
 }
 
 .sync-dot {
-  width: 8px;
-  height: 8px;
-  background-color: #10B981;
+  width: 7px;
+  height: 7px;
+  background-color: var(--ink-faint);
   border-radius: 50%;
-  box-shadow: 0 0 6px #10B981;
+}
+
+.sync-dot.live {
+  background-color: var(--trail);
+  box-shadow: 0 0 0 3px var(--trail-soft);
 }
 
 .featured-showcase-box {
-  background-color: #FFFFFF;
-  border-top: 5px solid var(--oxy-orange);
-  box-shadow: 0 20px 40px rgba(0, 15, 45, 0.35);
-  border-radius: var(--radius-sharp);
+  background-color: var(--surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
 }
 
 .showcase-top-header {
-  background-color: #00173D;
-  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 12px 24px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border-color);
 }
 
 .showcase-badge {
-  background-color: var(--oxy-orange);
-  color: #FFFFFF;
-  font-family: var(--font-heading);
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
-  padding: 3px 10px;
+  background-color: var(--accent-soft);
+  color: var(--accent-ink);
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: var(--radius-pill);
 }
 
 .showcase-year {
-  font-family: var(--font-heading);
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: #94A3B8;
-  letter-spacing: 0.08em;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-muted);
 }
 
 .showcase-body {
-  padding: 28px 26px;
+  padding: 26px;
 }
 
 .showcase-race-title {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--oxy-navy);
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: var(--ink);
   margin-bottom: 20px;
-  line-height: 1.25;
+  line-height: 1.3;
 }
 
 .showcase-meta-grid {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 9px;
   margin-bottom: 24px;
   padding-bottom: 20px;
   border-bottom: 1px solid var(--border-color);
@@ -299,41 +268,37 @@ onUnmounted(() => {
   display: flex;
   align-items: baseline;
   gap: 12px;
-  font-size: 0.95rem;
+  font-size: 0.92rem;
 }
 
 .meta-label {
-  font-family: var(--font-heading);
-  font-size: 0.82rem;
-  font-weight: 800;
+  font-size: 0.8rem;
   color: var(--text-muted);
-  width: 80px;
+  width: 72px;
   flex-shrink: 0;
-  letter-spacing: 0.05em;
 }
 
 .meta-val {
-  color: var(--text-body);
-  font-weight: 600;
+  color: var(--ink);
+  font-weight: 500;
 }
 
 .highlight-cat {
-  color: var(--oxy-orange);
-  font-weight: 800;
+  color: var(--accent);
+  font-weight: 600;
 }
 
-.oxy-timer-wrapper {
+.timer-wrapper {
   display: grid;
-  grid-template-columns: repeat(4, 1fr) auto;
-  align-items: center;
+  grid-template-columns: repeat(4, 1fr);
   gap: 8px;
   margin-bottom: 24px;
 }
 
 .timer-unit {
-  background-color: var(--bg-main);
+  background-color: var(--paper);
   border: 1px solid var(--border-color);
-  border-bottom: 3px solid var(--oxy-navy);
+  border-radius: var(--radius-sm);
   text-align: center;
   padding: 12px 6px;
 }
@@ -341,24 +306,18 @@ onUnmounted(() => {
 .unit-number {
   display: block;
   font-family: var(--font-heading);
-  font-size: 2rem;
-  font-weight: 800;
-  color: var(--oxy-navy);
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: var(--ink);
   line-height: 1;
+  font-variant-numeric: tabular-nums;
 }
 
 .unit-name {
   display: block;
-  font-family: var(--font-heading);
   font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.1em;
   color: var(--text-muted);
   margin-top: 4px;
-}
-
-.timer-separator {
-  display: none;
 }
 
 .showcase-actions {
@@ -367,10 +326,18 @@ onUnmounted(() => {
   gap: 10px;
 }
 
-.showcase-actions .btn-oxy {
+.showcase-actions .btn {
   flex: 1;
   min-width: 140px;
-  font-size: 0.88rem;
-  padding: 11px 16px;
+}
+
+.btn-secondary {
+  background: var(--paper);
+  border: 1px solid var(--border-color);
+  color: var(--ink);
+}
+
+.btn-secondary:hover {
+  border-color: var(--ink);
 }
 </style>
