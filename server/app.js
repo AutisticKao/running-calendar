@@ -1,11 +1,3 @@
-/**
- * ==============================================================================
- * Kalender Lari Indonesia - Express API Server
- * ------------------------------------------------------------------------------
- * Mendukung dev lokal & Serverless Netlify Functions.
- * ==============================================================================
- */
-
 const express = require('express');
 const cors = require('cors');
 const { queryEvents, queryStats, isConnectedToSupabase, getLocalSeedData } = require('./supabase');
@@ -16,8 +8,9 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-// 1. Health check & status
-app.get('/api/health', (req, res) => {
+const router = express.Router();
+
+router.get('/health', (req, res) => {
   const seed = getLocalSeedData();
   res.json({
     status: 'ok',
@@ -28,8 +21,7 @@ app.get('/api/health', (req, res) => {
   });
 });
 
-// 2. Query events list dengan filter tahun, kategori, bulan, pencarian
-app.get('/api/events', async (req, res) => {
+router.get('/events', async (req, res) => {
   try {
     const filters = {
       year: req.query.year || '2026',
@@ -51,8 +43,7 @@ app.get('/api/events', async (req, res) => {
   }
 });
 
-// 3. Highlight / Stats info tahun berjalan
-app.get('/api/stats', async (req, res) => {
+router.get('/stats', async (req, res) => {
   try {
     const year = req.query.year || '2026';
     const stats = await queryStats(year);
@@ -63,8 +54,7 @@ app.get('/api/stats', async (req, res) => {
   }
 });
 
-// 4. Trigger Scraping (Protected via CRON_SECRET)
-app.post('/api/cron/scrape', async (req, res) => {
+router.post('/cron/scrape', async (req, res) => {
   const secret = req.headers['x-cron-secret'] || req.query.secret;
   const configuredSecret = process.env.CRON_SECRET || 'running_secret_key_2026';
 
@@ -74,7 +64,6 @@ app.post('/api/cron/scrape', async (req, res) => {
 
   try {
     console.log('⚡ Scraping dipicu via API cron trigger...');
-    // Jalankan scraper di background agar tidak timeout pada HTTP request
     runScraper().catch(e => console.error('Cron scrape background error:', e));
 
     res.json({
@@ -86,5 +75,9 @@ app.post('/api/cron/scrape', async (req, res) => {
     res.status(500).json({ error: 'Failed to run scraper', message: err.message });
   }
 });
+
+app.use('/.netlify/functions/api', router);
+app.use('/api', router);
+app.use('/', router);
 
 module.exports = app;
