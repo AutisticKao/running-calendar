@@ -1,89 +1,110 @@
 <template>
   <div v-if="event" class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
+    <div class="modal-content oxy-modal-box">
+      <div class="modal-header-oxy">
         <div class="modal-tag-row">
-          <span v-if="event.is_featured" class="badge badge-featured">
-            ★ Highlight Race
+          <span class="oxy-spec-badge">TAHUN {{ event.year }}</span>
+          <span v-if="event.is_featured" class="oxy-featured-badge">
+            HIGHLIGHT RACE
           </span>
-          <span class="badge badge-primary">Tahun {{ event.year }}</span>
+          <span class="oxy-cat-badge">{{ event.category || 'REGULAR RACE' }}</span>
         </div>
-        <button class="btn-close" @click="$emit('close')">✕</button>
+        <button class="btn-close-oxy" @click="$emit('close')" aria-label="Tutup">✕</button>
       </div>
 
-      <!-- Title & Basic Info -->
-      <div class="modal-body">
+      <div class="modal-title-banner">
+        <span class="modal-pretitle">INFORMASI RESMI PERLOMBAAN</span>
         <h2 class="modal-event-title">{{ event.title }}</h2>
+      </div>
 
-        <div class="info-list">
-          <div class="info-row">
-            <span class="info-icon">📅</span>
-            <div class="info-content">
-              <span class="info-label">Tanggal Pelaksanaan</span>
-              <span class="info-value">{{ event.date_text }}</span>
+      <div class="modal-body-oxy">
+        <div class="specs-grid">
+          <div class="spec-card">
+            <div class="spec-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                <rect x="3" y="4" width="18" height="18" rx="0" ry="0"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+            </div>
+            <div class="spec-details">
+              <span class="spec-label">JADWAL PELAKSANAAN</span>
+              <span class="spec-val-bold">{{ event.date_text }}</span>
             </div>
           </div>
 
-          <div class="info-row">
-            <span class="info-icon">📍</span>
-            <div class="info-content">
-              <span class="info-label">Lokasi / Venue</span>
-              <span class="info-value">{{ event.location }}</span>
+          <div class="spec-card">
+            <div class="spec-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+            </div>
+            <div class="spec-details">
+              <span class="spec-label">KATEGORI & JARAK</span>
+              <span class="spec-val-bold">{{ event.category || 'Umum / Fun Run' }}</span>
+            </div>
+          </div>
+
+          <div class="spec-card spec-card-full">
+            <div class="spec-icon-box">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="square">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+            </div>
+            <div class="spec-details">
+              <span class="spec-label">VENUE & LOKASI PERLOMBAAN</span>
+              <span class="spec-val-bold">{{ event.location }}</span>
+              <span v-if="event.city" class="spec-city-tag">Kota / Wilayah: {{ event.city }}</span>
               <a
                 :href="mapsUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="maps-link"
+                class="maps-action-link"
               >
-                🗺️ Buka Rute di Google Maps ↗
+                PETUNJUK ARAH GOOGLE MAPS ↗
               </a>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <span class="info-icon">🏃</span>
-            <div class="info-content">
-              <span class="info-label">Kategori / Jarak</span>
-              <span class="info-value">{{ event.category || 'Umum' }}</span>
-            </div>
-          </div>
-
-          <div class="info-row">
-            <span class="info-icon">🏙️</span>
-            <div class="info-content">
-              <span class="info-label">Kota / Wilayah</span>
-              <span class="info-value">{{ event.city || 'Indonesia' }}</span>
             </div>
           </div>
         </div>
 
-        <!-- Action Links -->
-        <div class="modal-actions">
+        <div class="modal-actions-oxy">
           <a
             :href="event.detail_url"
             target="_blank"
             rel="noopener noreferrer"
-            class="btn-primary"
+            class="btn-oxy btn-oxy-primary btn-block-oxy"
           >
-            Halaman Sumber & Info Pendaftaran ↗
+            SUMBER RESMI & REGISTRASI ↗
           </a>
 
-          <a
-            :href="googleCalendarUrl"
-            target="_blank"
-            rel="noopener noreferrer"
-            class="btn-secondary"
-          >
-            📅 Tambah ke Google Calendar
-          </a>
+          <div class="secondary-actions-row">
+            <a
+              :href="googleCalendarUrl"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="btn-oxy btn-oxy-secondary flex-1"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              TAMBAH KE CALENDAR
+            </a>
 
-          <button
-            class="btn-secondary"
-            @click="$emit('toggle-bookmark', event)"
-          >
-            {{ isBookmarked ? '❤️ Hapus dari Wishlist' : '🤍 Simpan ke Wishlist' }}
-          </button>
+            <button
+              class="btn-oxy btn-oxy-navy flex-1"
+              @click="$emit('toggle-bookmark', event)"
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" :fill="isBookmarked ? '#FF5E13' : 'none'" stroke="currentColor" stroke-width="2">
+                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+              </svg>
+              {{ isBookmarked ? 'HAPUS DARI TARGET' : 'SIMPAN KE TARGET' }}
+            </button>
+          </div>
         </div>
       </div>
     </div>
@@ -128,113 +149,219 @@ const googleCalendarUrl = computed(() => {
 </script>
 
 <style scoped>
-.modal-header {
+.oxy-modal-box {
+  background-color: #FFFFFF;
+  border-top: 4px solid var(--oxy-orange);
+  border-radius: 0px;
+  overflow: hidden;
+}
+
+.modal-header-oxy {
+  background-color: var(--oxy-navy);
+  padding: 16px 24px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 26px 32px 18px;
-  border-bottom: 1px solid var(--border-subtle);
+  border-bottom: 2px solid rgba(255, 255, 255, 0.1);
 }
 
 .modal-tag-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.btn-close {
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-medium);
-  color: var(--text-secondary);
-  border-radius: var(--radius-full);
-  width: 36px;
-  height: 36px;
+.oxy-spec-badge {
+  background-color: rgba(255, 255, 255, 0.15);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 0px;
+}
+
+.oxy-featured-badge {
+  background-color: var(--oxy-orange);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 0px;
+}
+
+.oxy-cat-badge {
+  background-color: #00173D;
+  color: #FF5E13;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 3px 10px;
+  border-radius: 0px;
+  border: 1px solid rgba(255, 94, 19, 0.4);
+}
+
+.btn-close-oxy {
+  background-color: transparent;
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  font-weight: bold;
+  border-radius: 0px;
   transition: var(--transition-fast);
 }
 
-.btn-close:hover {
-  color: #FFFFFF;
-  background: var(--accent-black);
-  border-color: var(--accent-black);
+.btn-close-oxy:hover {
+  background-color: var(--oxy-orange);
+  border-color: var(--oxy-orange);
 }
 
-.modal-body {
-  padding: 32px;
+.modal-title-banner {
+  background-color: var(--oxy-navy-dark);
+  padding: 24px 28px;
+  border-bottom: 3px solid var(--oxy-orange);
+}
+
+.modal-pretitle {
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--oxy-orange);
+  letter-spacing: 0.15em;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .modal-event-title {
-  font-size: 1.75rem;
-  font-weight: 900;
-  line-height: 1.3;
-  letter-spacing: -0.03em;
+  font-family: var(--font-heading);
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.25;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.modal-body-oxy {
+  padding: 28px;
+  background-color: #FFFFFF;
+}
+
+.specs-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   margin-bottom: 28px;
-  color: var(--text-primary);
 }
 
-.info-list {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  margin-bottom: 34px;
+@media (max-width: 600px) {
+  .specs-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
-.info-row {
+.spec-card {
+  background-color: #F8FAFD;
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--oxy-orange);
+  padding: 16px;
   display: flex;
   align-items: flex-start;
-  gap: 16px;
+  gap: 14px;
 }
 
-.info-icon {
-  font-size: 1.3rem;
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-sm);
-  width: 44px;
-  height: 44px;
+.spec-card-full {
+  grid-column: 1 / -1;
+}
+
+.spec-icon-box {
+  width: 38px;
+  height: 38px;
+  background-color: var(--oxy-navy);
+  color: #FFFFFF;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
 }
 
-.info-content {
+.spec-details {
   display: flex;
   flex-direction: column;
 }
 
-.info-label {
+.spec-label {
+  font-family: var(--font-heading);
   font-size: 0.74rem;
-  color: var(--text-muted);
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-}
-
-.info-value {
-  font-size: 1.1rem;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.maps-link {
-  font-size: 0.84rem;
-  color: var(--accent-primary);
   font-weight: 700;
-  margin-top: 4px;
-  display: inline-block;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
 }
 
-.maps-link:hover {
+.spec-val-bold {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--oxy-navy);
+  margin-top: 2px;
+}
+
+.spec-city-tag {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 3px;
+}
+
+.maps-action-link {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--oxy-orange);
+  letter-spacing: 0.05em;
+  margin-top: 6px;
+  display: inline-block;
   text-decoration: underline;
 }
 
-.modal-actions {
+.maps-action-link:hover {
+  color: var(--oxy-navy);
+}
+
+.modal-actions-oxy {
   display: flex;
   flex-direction: column;
   gap: 12px;
+}
+
+.btn-block-oxy {
+  width: 100%;
+  padding: 14px 20px;
+  font-size: 1rem;
+}
+
+.secondary-actions-row {
+  display: flex;
+  gap: 12px;
+}
+
+@media (max-width: 540px) {
+  .secondary-actions-row {
+    flex-direction: column;
+  }
+}
+
+.flex-1 {
+  flex: 1;
 }
 </style>

@@ -1,50 +1,48 @@
 <template>
-  <div v-if="stats" class="stats-section">
+  <div v-if="stats" class="oxy-stats-section">
     <div class="container">
-      <div class="stats-card">
-        <div class="stats-header">
-          <div class="stats-title-group">
-            <span class="stats-subtitle">STATISTIK KALENDER {{ stats.year }}</span>
-            <h3 class="stats-title">Distribusi Kategori Lomba</h3>
+      <div class="stats-overview-box">
+        <div class="stats-top-row">
+          <div class="stats-headline-group">
+            <span class="oxy-subtitle">REKAP DATA TAHUN {{ stats.year }}</span>
+            <h3 class="stats-main-heading">Distribusi Kategori Lomba Lari</h3>
           </div>
-          <div class="total-badge">
-            <span class="total-number">{{ stats.totalThisYear }}</span>
-            <span class="total-label">Total Lomba</span>
+          <div class="stats-total-box">
+            <span class="total-big-num">{{ stats.totalThisYear }}</span>
+            <span class="total-big-label">TOTAL EVENT TERDATA</span>
           </div>
         </div>
 
-        <!-- Categories Distribution Grid -->
-        <div class="category-stat-grid">
+        <div class="category-metrics-grid">
           <div
             v-for="(count, catName) in stats.categories"
             :key="catName"
-            class="cat-stat-box"
+            class="metric-box"
             @click="$emit('select-category', catName)"
           >
-            <div class="cat-stat-info">
-              <span class="cat-stat-name">{{ catName }}</span>
-              <span class="cat-stat-count">{{ count }}</span>
+            <div class="metric-info">
+              <span class="metric-name">{{ catName }}</span>
+              <span class="metric-count">{{ count }}</span>
             </div>
-            <div class="cat-stat-bar-bg">
+            <div class="metric-track">
               <div
-                class="cat-stat-bar-fill"
+                class="metric-fill"
                 :style="{ width: `${stats.totalThisYear ? Math.min(100, Math.round((count / stats.totalThisYear) * 100 * 2.2)) : 0}%` }"
               ></div>
             </div>
           </div>
         </div>
 
-        <!-- Top Cities Strip -->
-        <div v-if="stats.topCities && stats.topCities.length" class="cities-strip">
-          <span class="cities-label">📍 KOTA POPULER:</span>
-          <div class="cities-list">
+        <div v-if="stats.topCities && stats.topCities.length" class="popular-cities-bar">
+          <span class="cities-title">KOTA PENYELENGGARA UTAMA:</span>
+          <div class="cities-tags-wrap">
             <span
               v-for="item in stats.topCities"
               :key="item.city"
-              class="city-chip"
+              class="city-tag-btn"
               @click="$emit('filter-city', item.city)"
             >
-              {{ item.city }} <strong class="city-count">({{ item.count }})</strong>
+              {{ item.city }} <strong>({{ item.count }})</strong>
             </span>
           </div>
         </div>
@@ -65,19 +63,19 @@ defineEmits(['select-category', 'filter-city']);
 </script>
 
 <style scoped>
-.stats-section {
+.oxy-stats-section {
   padding-bottom: 24px;
 }
 
-.stats-card {
-  padding: 28px 32px;
-  background: #FFFFFF;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-card);
+.stats-overview-box {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-top: 4px solid var(--oxy-orange);
+  padding: 26px 30px;
+  box-shadow: var(--shadow-subtle);
 }
 
-.stats-header {
+.stats-top-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -86,150 +84,143 @@ defineEmits(['select-category', 'filter-city']);
   gap: 16px;
 }
 
-.stats-subtitle {
-  font-size: 0.74rem;
-  font-weight: 800;
-  letter-spacing: 0.14em;
-  color: var(--accent-primary);
-  text-transform: uppercase;
-}
-
-.stats-title {
+.stats-main-heading {
   font-size: 1.4rem;
-  font-weight: 900;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
+  font-weight: 800;
+  color: var(--oxy-navy);
+  margin-top: 4px;
 }
 
-.total-badge {
+.stats-total-box {
   display: flex;
   align-items: center;
   gap: 12px;
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-medium);
-  padding: 8px 20px;
-  border-radius: var(--radius-full);
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-left: 3px solid var(--oxy-orange);
+  padding: 8px 18px;
 }
 
-.total-number {
+.total-big-num {
   font-family: var(--font-heading);
-  font-size: 1.9rem;
-  font-weight: 900;
-  color: var(--text-primary);
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--oxy-navy);
   line-height: 1;
 }
 
-.total-label {
+.total-big-label {
+  font-family: var(--font-heading);
   font-size: 0.76rem;
   font-weight: 800;
-  color: var(--text-secondary);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
 }
 
-/* Category Grid */
-.category-stat-grid {
+.category-metrics-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
   margin-bottom: 24px;
 }
 
-.cat-stat-box {
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 14px 16px;
+.metric-box {
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  padding: 12px 14px;
   cursor: pointer;
   transition: var(--transition-fast);
 }
 
-.cat-stat-box:hover {
-  border-color: var(--accent-black);
-  background: #FFFFFF;
-  box-shadow: var(--shadow-subtle);
-  transform: translateY(-2px);
+.metric-box:hover {
+  border-color: var(--oxy-orange);
+  background-color: #FFFFFF;
+  box-shadow: 0 4px 10px rgba(0, 34, 90, 0.08);
 }
 
-.cat-stat-info {
+.metric-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
-.cat-stat-name {
-  font-size: 0.84rem;
+.metric-name {
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
   font-weight: 700;
-  color: var(--text-secondary);
+  color: var(--oxy-navy);
 }
 
-.cat-stat-count {
+.metric-count {
   font-family: var(--font-heading);
   font-size: 1.25rem;
-  font-weight: 900;
-  color: var(--text-primary);
+  font-weight: 800;
+  color: var(--oxy-orange);
 }
 
-.cat-stat-bar-bg {
+.metric-track {
   width: 100%;
-  height: 5px;
-  background: #E5E7EB;
-  border-radius: var(--radius-full);
-  overflow: hidden;
+  height: 4px;
+  background-color: #CBD5E1;
 }
 
-.cat-stat-bar-fill {
+.metric-fill {
   height: 100%;
-  background: var(--accent-black);
-  border-radius: var(--radius-full);
-  transition: width 0.6s ease;
+  background-color: var(--oxy-navy);
+  transition: width 0.5s ease;
 }
 
-/* Cities Strip */
-.cities-strip {
+.metric-box:hover .metric-fill {
+  background-color: var(--oxy-orange);
+}
+
+.popular-cities-bar {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 12px;
   padding-top: 18px;
-  border-top: 1px solid var(--border-subtle);
+  border-top: 1px solid var(--border-color);
 }
 
-.cities-label {
-  font-size: 0.74rem;
+.cities-title {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
   font-weight: 800;
   letter-spacing: 0.08em;
   color: var(--text-muted);
 }
 
-.cities-list {
+.cities-tags-wrap {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.city-chip {
-  background: #FFFFFF;
-  border: 1px solid var(--border-medium);
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  font-weight: 600;
-  padding: 5px 14px;
-  border-radius: var(--radius-full);
+.city-tag-btn {
+  font-family: var(--font-heading);
+  font-size: 0.88rem;
+  font-weight: 700;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: var(--oxy-navy);
+  padding: 4px 12px;
   cursor: pointer;
-  box-shadow: var(--shadow-subtle);
   transition: var(--transition-fast);
 }
 
-.city-chip:hover {
-  border-color: var(--accent-black);
-  color: var(--accent-black);
-  background: var(--bg-surface-soft);
+.city-tag-btn:hover {
+  background-color: var(--oxy-orange);
+  color: #FFFFFF;
+  border-color: var(--oxy-orange);
 }
 
-.city-count {
-  color: var(--text-primary);
-  font-weight: 800;
+.city-tag-btn strong {
+  color: var(--oxy-orange);
+}
+
+.city-tag-btn:hover strong {
+  color: #FFFFFF;
 }
 </style>

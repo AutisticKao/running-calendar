@@ -1,57 +1,51 @@
 <template>
-  <div class="event-card" :class="{ 'is-featured': event.is_featured }">
-    <!-- Top Meta Row -->
-    <div class="card-top-row">
-      <div class="date-chip">
-        <span class="date-icon">📅</span>
+  <div class="oxy-event-card" :class="{ 'is-featured': event.is_featured }">
+    <div class="card-meta-bar">
+      <div class="date-badge-sharp">
         <span class="date-text">{{ event.date_text }}</span>
       </div>
 
-      <div class="card-actions-top">
-        <span v-if="event.is_featured" class="badge badge-featured">
-          ★ Highlight
+      <div class="meta-bar-right">
+        <span v-if="event.is_featured" class="badge-featured-sharp">
+          HIGHLIGHT
         </span>
         <button
-          class="btn-bookmark"
+          class="btn-bookmark-sharp"
           :class="{ bookmarked: isBookmarked }"
           @click.stop="$emit('toggle-bookmark', event)"
           :title="isBookmarked ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'"
         >
-          {{ isBookmarked ? '❤️' : '🤍' }}
+          {{ isBookmarked ? '★' : '☆' }}
         </button>
       </div>
     </div>
 
-    <!-- Title & Location -->
-    <div class="card-main" @click="$emit('select-event', event)">
-      <h3 class="event-title">{{ event.title }}</h3>
+    <div class="card-content-area" @click="$emit('select-event', event)">
+      <h3 class="event-headline">{{ event.title }}</h3>
 
-      <div class="event-location">
-        <span class="loc-icon">📍</span>
-        <span class="loc-text">{{ event.location }}</span>
+      <div class="event-venue-row">
+        <span class="venue-icon">📍</span>
+        <span class="venue-text">{{ event.location }}</span>
       </div>
     </div>
 
-    <!-- Category Badges -->
-    <div class="category-tags">
+    <div class="category-badges-row">
       <span
         v-for="(tag, idx) in parsedCategories"
         :key="idx"
-        class="badge-category"
+        class="cat-badge-sharp"
         :class="getBadgeClass(tag)"
       >
         {{ tag }}
       </span>
     </div>
 
-    <!-- Card Footer -->
-    <div class="card-footer">
-      <span class="city-tag">{{ event.city || 'Indonesia' }}</span>
-      <div class="footer-buttons">
-        <button class="btn-detail" @click="$emit('select-event', event)">
-          Detail Race ↗
-        </button>
-      </div>
+    <div class="card-action-footer">
+      <span class="city-indicator">{{ event.city || 'INDONESIA' }}</span>
+      <button class="btn-read-more" @click="$emit('select-event', event)">
+        <span>DETAIL RACE</span>
+        <span class="arrow">→</span>
+      </button>
     </div>
   </div>
 </template>
@@ -79,206 +73,227 @@ const parsedCategories = computed(() => {
 
 function getBadgeClass(tag) {
   const t = tag.toLowerCase();
-  if (t.includes('42k') || t.includes('marathon')) return 'tag-marathon';
-  if (t.includes('21k') || t.includes('half')) return 'tag-half';
-  if (t.includes('10k')) return 'tag-10k';
-  if (t.includes('5k')) return 'tag-5k';
-  if (t.includes('trail')) return 'tag-trail';
-  if (t.includes('ultra')) return 'tag-ultra';
+  if (t.includes('42k') || t.includes('marathon')) return 'cat-marathon';
+  if (t.includes('21k') || t.includes('half')) return 'cat-half';
+  if (t.includes('10k')) return 'cat-10k';
+  if (t.includes('5k')) return 'cat-5k';
+  if (t.includes('trail')) return 'cat-trail';
+  if (t.includes('ultra')) return 'cat-ultra';
   return '';
 }
 </script>
 
 <style scoped>
-.event-card {
+.oxy-event-card {
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-top: 3px solid var(--oxy-navy);
   display: flex;
   flex-direction: column;
-  padding: 24px;
-  border-radius: var(--radius-md);
   position: relative;
-  background: #FFFFFF;
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-card);
-  transition: var(--transition-normal);
+  transition: var(--transition-fast);
+  box-shadow: var(--shadow-subtle);
 }
 
-.event-card:hover {
-  transform: translateY(-5px);
-  box-shadow: var(--shadow-card-hover);
-  border-color: var(--border-medium);
+.oxy-event-card:hover {
+  border-top-color: var(--oxy-orange);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-hover);
 }
 
-.event-card.is-featured {
-  border-color: #E2E8F0;
-  box-shadow: 0 10px 30px -5px rgba(0, 82, 255, 0.08), 0 4px 12px rgba(17, 24, 39, 0.03);
+.oxy-event-card.is-featured {
+  border-top: 4px solid var(--oxy-orange);
 }
 
-.event-card.is-featured::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 24px;
-  right: 24px;
-  height: 3px;
-  background: var(--accent-black);
-  border-radius: 0 0 4px 4px;
-}
-
-.card-top-row {
+.card-meta-bar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
+  padding: 12px 18px;
+  background-color: #FAFBFC;
+  border-bottom: 1px solid var(--border-color);
 }
 
-.date-chip {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-subtle);
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
-  font-size: 0.8rem;
+.date-badge-sharp {
+  background-color: var(--oxy-orange);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
   font-weight: 700;
-  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  padding: 3px 10px;
 }
 
-.card-actions-top {
+.meta-bar-right {
   display: flex;
   align-items: center;
   gap: 8px;
 }
 
-.btn-bookmark {
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-full);
-  width: 34px;
-  height: 34px;
+.badge-featured-sharp {
+  background-color: var(--oxy-navy);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  padding: 2px 8px;
+}
+
+.btn-bookmark-sharp {
+  width: 28px;
+  height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.92rem;
+  background-color: #FFFFFF;
+  border: 1px solid var(--border-color);
+  font-size: 1.1rem;
+  color: var(--text-muted);
   transition: var(--transition-fast);
 }
 
-.btn-bookmark:hover {
-  transform: scale(1.12);
-  border-color: var(--accent-black);
-  background: #FFFFFF;
+.btn-bookmark-sharp:hover,
+.btn-bookmark-sharp.bookmarked {
+  background-color: var(--oxy-navy);
+  color: var(--oxy-orange);
+  border-color: var(--oxy-navy);
 }
 
-.card-main {
+/* Content Area */
+.card-content-area {
+  padding: 20px 20px 14px;
   flex: 1;
   cursor: pointer;
-  margin-bottom: 16px;
 }
 
-.event-title {
-  font-size: 1.18rem;
+.event-headline {
+  font-size: 1.25rem;
   font-weight: 800;
-  line-height: 1.35;
-  color: var(--text-primary);
+  color: var(--oxy-navy);
+  line-height: 1.3;
   margin-bottom: 10px;
-  letter-spacing: -0.02em;
+  letter-spacing: 0.02em;
   transition: var(--transition-fast);
 }
 
-.card-main:hover .event-title {
-  color: var(--accent-primary);
+.card-content-area:hover .event-headline {
+  color: var(--oxy-orange);
 }
 
-.event-location {
+.event-venue-row {
   display: flex;
   align-items: flex-start;
   gap: 6px;
-  font-size: 0.86rem;
-  color: var(--text-secondary);
+  font-size: 0.88rem;
+  color: var(--text-body);
 }
 
-.loc-icon {
-  font-size: 0.86rem;
-  line-height: 1.4;
+.venue-icon {
+  font-size: 0.9rem;
   opacity: 0.7;
 }
 
-.loc-text {
-  line-height: 1.35;
+.venue-text {
+  line-height: 1.4;
 }
 
-/* Category Tags - Brook Clean Pastel Style */
-.category-tags {
+/* Category Badges */
+.category-badges-row {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
-  margin-bottom: 18px;
+  padding: 0 20px 18px;
 }
 
-.tag-marathon {
-  border-color: #FED7AA;
-  color: #C2410C;
-  background: #FFF7ED;
+.cat-badge-sharp {
+  font-family: var(--font-heading);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 2px 8px;
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  color: var(--text-body);
 }
 
-.tag-half {
-  border-color: #BFDBFE;
-  color: #1D4ED8;
-  background: #EFF6FF;
+.cat-marathon {
+  background-color: #FFF2EB;
+  border-color: #FFD4C2;
+  color: var(--oxy-orange-dark);
 }
 
-.tag-10k {
-  border-color: #A7F3D0;
-  color: #047857;
-  background: #ECFDF5;
+.cat-half {
+  background-color: #EEF4FF;
+  border-color: #BFD7FE;
+  color: var(--oxy-navy);
 }
 
-.tag-5k {
-  border-color: #FDE68A;
+.cat-10k {
+  background-color: #EDFDF7;
+  border-color: #A3F3D2;
+  color: #059669;
+}
+
+.cat-5k {
+  background-color: #FEF9EB;
+  border-color: #FDE8A5;
   color: #B45309;
-  background: #FFFBEB;
 }
 
-.tag-trail {
+.cat-trail {
+  background-color: #F5F3FF;
   border-color: #DDD6FE;
   color: #6D28D9;
-  background: #F5F3FF;
 }
 
-.tag-ultra {
+.cat-ultra {
+  background-color: #FDF2F8;
   border-color: #FBCFE8;
   color: #BE185D;
-  background: #FDF2F8;
 }
 
-.card-footer {
+/* Footer */
+.card-action-footer {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding-top: 14px;
-  border-top: 1px solid var(--border-subtle);
+  padding: 12px 20px;
+  background-color: #FAFBFC;
+  border-top: 1px solid var(--border-color);
 }
 
-.city-tag {
-  font-size: 0.78rem;
-  color: var(--text-muted);
+.city-indicator {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
   font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.08em;
+  color: var(--text-muted);
 }
 
-.btn-detail {
-  font-size: 0.84rem;
-  font-weight: 800;
-  color: var(--text-primary);
-  display: inline-flex;
+.btn-read-more {
+  display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
+  font-family: var(--font-heading);
+  font-size: 0.85rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: var(--oxy-navy);
   transition: var(--transition-fast);
 }
 
-.btn-detail:hover {
-  color: var(--accent-primary);
-  transform: translateX(2px);
+.btn-read-more .arrow {
+  color: var(--oxy-orange);
+  font-size: 1rem;
+  transition: var(--transition-fast);
+}
+
+.btn-read-more:hover {
+  color: var(--oxy-orange);
+}
+
+.btn-read-more:hover .arrow {
+  transform: translateX(4px);
 }
 </style>

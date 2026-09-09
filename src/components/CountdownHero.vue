@@ -1,70 +1,86 @@
 <template>
-  <div class="hero-section">
+  <div class="oxy-hero-section">
     <div class="container hero-container">
-      <!-- Tagline Badge -->
-      <div class="hero-badge">
-        <span class="badge-dot"></span>
-        <span>KALENDER RESMI LARI INDONESIA</span>
+      <div class="hero-left-content">
+        <div class="hero-tagline">
+          <span class="tagline-bar"></span>
+          <span>DATABASE EVENT LARI TERBESAR DI INDONESIA</span>
+        </div>
+
+        <h1 class="hero-main-title">
+          Jadwal Lengkap &amp; <br />
+          <span>Kalender Lari Indonesia</span>
+        </h1>
+
+        <p class="hero-description">
+          Akses informasi terpercaya jadwal race lari di seluruh nusantara dari kategori 5K, 10K, Half Marathon, Full Marathon, hingga Ultra Trail Run (Arsip Resmi 2018 - 2026).
+        </p>
+
+        <div class="hero-button-group">
+          <a href="#events-section" class="btn-oxy btn-oxy-primary">
+            JELAJAHI JADWAL LARI ↓
+          </a>
+          <div class="hero-sync-badge">
+            <span class="sync-dot"></span>
+            <span>Update Otomatis Tiap 48 Jam</span>
+          </div>
+        </div>
       </div>
 
-      <!-- Main Editorial Headline -->
-      <h1 class="hero-title">
-        Temukan Garis Finis Anda. <br />
-        <span class="hero-title-gradient">Jadwal Event Lari Terlengkap.</span>
-      </h1>
-      <p class="hero-subtitle">
-        Jelajahi ribuan jadwal race lari di seluruh Indonesia dari 5K, 10K, Half Marathon, Full Marathon, hingga Ultra Trail Run (2018 - 2026).
-      </p>
-
-      <!-- Featured Race Countdown Card (Brook Floating Card) -->
-      <div v-if="featuredEvent" class="countdown-card">
-        <div class="countdown-header">
-          <div class="countdown-tag">
-            <span class="badge badge-featured">★ HIGHLIGHT RACE</span>
-            <span class="race-year">Musim {{ featuredEvent.year }}</span>
-          </div>
-          <h2 class="countdown-race-title">{{ featuredEvent.title }}</h2>
-          <div class="countdown-meta">
-            <span class="meta-item">
-              📅 {{ featuredEvent.date_text }}
-            </span>
-            <span class="meta-separator">•</span>
-            <span class="meta-item">
-              📍 {{ featuredEvent.location }}
-            </span>
-            <span class="badge badge-primary">{{ featuredEvent.category }}</span>
-          </div>
+      <div v-if="featuredEvent" class="featured-showcase-box">
+        <div class="showcase-top-header">
+          <span class="showcase-badge">HIGHLIGHT EVENT</span>
+          <span class="showcase-year">TAHUN {{ featuredEvent.year }}</span>
         </div>
 
-        <div class="timer-grid">
-          <div class="timer-box">
-            <span class="timer-num">{{ timeLeft.days }}</span>
-            <span class="timer-label">HARI</span>
-          </div>
-          <div class="timer-colon">:</div>
-          <div class="timer-box">
-            <span class="timer-num">{{ pad(timeLeft.hours) }}</span>
-            <span class="timer-label">JAM</span>
-          </div>
-          <div class="timer-colon">:</div>
-          <div class="timer-box">
-            <span class="timer-num">{{ pad(timeLeft.minutes) }}</span>
-            <span class="timer-label">MENIT</span>
-          </div>
-          <div class="timer-colon">:</div>
-          <div class="timer-box">
-            <span class="timer-num">{{ pad(timeLeft.seconds) }}</span>
-            <span class="timer-label">DETIK</span>
-          </div>
-        </div>
+        <div class="showcase-body">
+          <h2 class="showcase-race-title">{{ featuredEvent.title }}</h2>
 
-        <div class="countdown-footer">
-          <button class="btn-primary" @click="$emit('select-featured', featuredEvent)">
-            Lihat Detail Race
-          </button>
-          <a :href="featuredEvent.detail_url" target="_blank" rel="noopener noreferrer" class="btn-secondary">
-            Website Sumber ↗
-          </a>
+          <div class="showcase-meta-grid">
+            <div class="meta-row">
+              <span class="meta-label">TANGGAL:</span>
+              <span class="meta-val">{{ featuredEvent.date_text }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">LOKASI:</span>
+              <span class="meta-val">{{ featuredEvent.location }}</span>
+            </div>
+            <div class="meta-row">
+              <span class="meta-label">KATEGORI:</span>
+              <span class="meta-val highlight-cat">{{ featuredEvent.category }}</span>
+            </div>
+          </div>
+
+          <div class="oxy-timer-wrapper">
+            <div class="timer-unit">
+              <span class="unit-number">{{ timeLeft.days }}</span>
+              <span class="unit-name">HARI</span>
+            </div>
+            <div class="timer-separator">:</div>
+            <div class="timer-unit">
+              <span class="unit-number">{{ pad(timeLeft.hours) }}</span>
+              <span class="unit-name">JAM</span>
+            </div>
+            <div class="timer-separator">:</div>
+            <div class="timer-unit">
+              <span class="unit-number">{{ pad(timeLeft.minutes) }}</span>
+              <span class="unit-name">MENIT</span>
+            </div>
+            <div class="timer-separator">:</div>
+            <div class="timer-unit">
+              <span class="unit-number">{{ pad(timeLeft.seconds) }}</span>
+              <span class="unit-name">DETIK</span>
+            </div>
+          </div>
+
+          <div class="showcase-actions">
+            <button class="btn-oxy btn-oxy-primary" @click="$emit('select-featured', featuredEvent)">
+              LIHAT DETAIL LOMBA →
+            </button>
+            <a :href="featuredEvent.detail_url" target="_blank" rel="noopener noreferrer" class="btn-oxy btn-oxy-secondary">
+              INFO SUMBER ↗
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -134,173 +150,227 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-.hero-section {
+.oxy-hero-section {
+  background: linear-gradient(135deg, #00173D 0%, #00225A 60%, #0B3278 100%);
+  padding: 60px 0;
+  border-bottom: 4px solid var(--oxy-orange);
   position: relative;
-  padding: 64px 0 48px;
-  background: radial-gradient(100% 100% at 50% 0%, #FFFFFF 0%, #F5F7FB 100%);
-  border-bottom: 1px solid var(--border-subtle);
+  overflow: hidden;
 }
 
 .hero-container {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: 40px;
   align-items: center;
-  text-align: center;
 }
 
-.hero-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: #FFFFFF;
-  border: 1px solid var(--border-medium);
-  box-shadow: var(--shadow-subtle);
-  color: var(--text-primary);
-  padding: 7px 16px;
-  border-radius: var(--radius-full);
-  font-size: 0.76rem;
-  font-weight: 800;
-  letter-spacing: 0.12em;
-  margin-bottom: 24px;
+@media (max-width: 991px) {
+  .hero-container {
+    grid-template-columns: 1fr;
+    gap: 36px;
+  }
 }
 
-.badge-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background-color: var(--accent-primary);
-  box-shadow: 0 0 8px var(--accent-primary);
-}
-
-.hero-title {
-  font-size: clamp(2.4rem, 5.5vw, 4.2rem);
-  font-weight: 900;
-  line-height: 1.12;
-  letter-spacing: -0.035em;
-  max-width: 900px;
-  margin-bottom: 18px;
-  color: var(--text-primary);
-}
-
-.hero-title-gradient {
-  color: var(--text-secondary);
-  font-weight: 800;
-}
-
-.hero-subtitle {
-  font-size: clamp(1.05rem, 2vw, 1.25rem);
-  color: var(--text-secondary);
-  max-width: 680px;
-  margin-bottom: 42px;
-  line-height: 1.6;
-}
-
-/* Brook Floating Countdown Card */
-.countdown-card {
-  width: 100%;
-  max-width: 820px;
-  padding: 38px 34px;
-  border-radius: var(--radius-lg);
-  margin-bottom: 48px;
-  background: #FFFFFF;
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-elevated);
-  transition: var(--transition-normal);
-}
-
-.countdown-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 12px;
-  margin-bottom: 30px;
-}
-
-.countdown-tag {
+.hero-tagline {
   display: flex;
   align-items: center;
   gap: 10px;
+  color: var(--oxy-orange);
+  font-family: var(--font-heading);
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
 }
 
-.race-year {
-  color: var(--text-muted);
+.tagline-bar {
+  width: 24px;
+  height: 3px;
+  background-color: var(--oxy-orange);
+}
+
+.hero-main-title {
+  font-size: clamp(2.4rem, 4.5vw, 3.8rem);
+  font-weight: 800;
+  color: #FFFFFF;
+  line-height: 1.1;
+  margin-bottom: 20px;
+  letter-spacing: 0.02em;
+}
+
+.hero-main-title span {
+  color: var(--oxy-orange);
+}
+
+.hero-description {
+  font-size: 1.05rem;
+  color: #CBD5E1;
+  max-width: 540px;
+  line-height: 1.6;
+  margin-bottom: 30px;
+}
+
+.hero-button-group {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.hero-sync-badge {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #E2E8F0;
+  font-size: 0.86rem;
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.25);
+  padding: 8px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  background-color: #10B981;
+  border-radius: 50%;
+  box-shadow: 0 0 6px #10B981;
+}
+
+.featured-showcase-box {
+  background-color: #FFFFFF;
+  border-top: 5px solid var(--oxy-orange);
+  box-shadow: 0 20px 40px rgba(0, 15, 45, 0.35);
+  border-radius: var(--radius-sharp);
+}
+
+.showcase-top-header {
+  background-color: #00173D;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.showcase-badge {
+  background-color: var(--oxy-orange);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  padding: 3px 10px;
+}
+
+.showcase-year {
+  font-family: var(--font-heading);
+  font-size: 0.86rem;
   font-weight: 700;
+  color: #94A3B8;
+  letter-spacing: 0.08em;
+}
+
+.showcase-body {
+  padding: 28px 26px;
+}
+
+.showcase-race-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--oxy-navy);
+  margin-bottom: 20px;
+  line-height: 1.25;
+}
+
+.showcase-meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 24px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.meta-row {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+  font-size: 0.95rem;
+}
+
+.meta-label {
+  font-family: var(--font-heading);
   font-size: 0.82rem;
-  text-transform: uppercase;
+  font-weight: 800;
+  color: var(--text-muted);
+  width: 80px;
+  flex-shrink: 0;
   letter-spacing: 0.05em;
 }
 
-.countdown-race-title {
-  font-size: clamp(1.5rem, 3.2vw, 2.2rem);
-  font-weight: 900;
-  letter-spacing: -0.03em;
-  color: var(--text-primary);
+.meta-val {
+  color: var(--text-body);
+  font-weight: 600;
 }
 
-.countdown-meta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  font-size: 0.92rem;
-  color: var(--text-secondary);
-}
-
-.meta-separator {
-  color: var(--border-medium);
-}
-
-.timer-grid {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  margin-bottom: 32px;
-}
-
-.timer-box {
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 16px 22px;
-  min-width: 95px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  box-shadow: var(--shadow-subtle);
-}
-
-.timer-num {
-  font-family: var(--font-heading);
-  font-size: 2.5rem;
-  font-weight: 900;
-  color: var(--text-primary);
-  line-height: 1;
-  letter-spacing: -0.04em;
-}
-
-.timer-label {
-  font-size: 0.68rem;
+.highlight-cat {
+  color: var(--oxy-orange);
   font-weight: 800;
-  letter-spacing: 0.14em;
-  color: var(--text-muted);
-  margin-top: 6px;
 }
 
-.timer-colon {
+.oxy-timer-wrapper {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 24px;
+}
+
+.timer-unit {
+  background-color: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-bottom: 3px solid var(--oxy-navy);
+  text-align: center;
+  padding: 12px 6px;
+}
+
+.unit-number {
+  display: block;
+  font-family: var(--font-heading);
   font-size: 2rem;
   font-weight: 800;
-  color: var(--text-muted);
+  color: var(--oxy-navy);
+  line-height: 1;
 }
 
-.countdown-footer {
+.unit-name {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.timer-separator {
+  display: none;
+}
+
+.showcase-actions {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
-  gap: 14px;
+  gap: 10px;
 }
 
-
+.showcase-actions .btn-oxy {
+  flex: 1;
+  min-width: 140px;
+  font-size: 0.88rem;
+  padding: 11px 16px;
+}
 </style>

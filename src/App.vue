@@ -1,50 +1,66 @@
 <template>
   <div class="app-wrapper">
-    <!-- Navbar (Brook Creative Agency Minimalist Header) -->
-    <header class="navbar">
-      <div class="container navbar-inner">
-        <div class="brand-logo">
-          <div class="brand-icon">🏃</div>
-          <div class="brand-text">
-            <span class="brand-title">KALENDER LARI</span>
-            <span class="brand-subtitle">INDONESIA</span>
+    <header class="oxy-header">
+      <div class="header-topbar">
+        <div class="container topbar-inner">
+          <div class="topbar-left">
+            <div class="topbar-item">
+              <span>KALENDER RESMI EVENT LARI INDONESIA 2018 - 2026</span>
+            </div>
+            <div class="topbar-item hide-mobile">
+              <span class="topbar-badge">LIVE DATABASE SYNC</span>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <div class="topbar-item" :title="healthInfo.supabaseConnected ? 'Terhubung ke PostgreSQL Supabase' : 'Data Seed Aktif'">
+              <span class="hide-mobile">DATABASE:</span>
+              <span class="topbar-badge">
+                {{ healthInfo.supabaseConnected ? 'SUPABASE ONLINE' : 'LOCAL SEED' }}
+              </span>
+            </div>
           </div>
         </div>
+      </div>
 
-        <div class="nav-actions">
-          <!-- Database status indicator -->
-          <div class="db-status-pill" :title="healthInfo.supabaseConnected ? 'Terhubung ke PostgreSQL Supabase' : 'Menggunakan Data Seed Lokal'">
-            <span class="db-status-dot" :class="{ 'connected': healthInfo.supabaseConnected }"></span>
-            <span class="db-status-text">
-              {{ healthInfo.supabaseConnected ? 'Supabase' : 'Local Seed' }}
-            </span>
+      <div class="header-mainnav">
+        <div class="container mainnav-inner">
+          <div class="brand-wrap">
+            <div class="brand-icon-box">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
+              </svg>
+            </div>
+            <div class="brand-title-group">
+              <div class="brand-title">KALENDER<span>LARI</span></div>
+              <div class="brand-tagline">INDONESIA RUNNING DIRECTORY</div>
+            </div>
           </div>
 
-          <!-- Wishlist / Target Race Button -->
-          <button class="btn-wishlist-toggle" @click="isWishlistOpen = true">
-            <span>❤️ Target Race</span>
-            <span class="wishlist-count">{{ bookmarks.length }}</span>
-          </button>
+          <div class="mainnav-actions">
+            <button class="btn-wishlist-oxy" @click="isWishlistOpen = true">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+              </svg>
+              <span>TARGET RACE</span>
+              <span class="wishlist-counter-box">{{ bookmarks.length }}</span>
+            </button>
+          </div>
         </div>
       </div>
     </header>
 
-    <!-- Main Content -->
     <main>
-      <!-- Hero Section with Next Race Countdown -->
       <CountdownHero
         :featured-event="stats?.nextBigEvent || events[0]"
         @select-featured="openEventDetail"
       />
 
-      <!-- Year Stats & Category Breakdown -->
       <StatsBar
         :stats="stats"
         @select-category="handleCategorySelect"
         @filter-city="handleCityFilter"
       />
 
-      <!-- Filter & Search Controls -->
       <FilterBar
         v-model:selected-year="selectedYear"
         v-model:selected-month="selectedMonth"
@@ -55,55 +71,55 @@
         @toggle-sort="toggleSort"
       />
 
-      <!-- Events List Section -->
       <section class="events-section">
         <div class="container">
-          <!-- Section Header / Result Counter -->
           <div class="results-header">
-            <div class="results-title-group">
-              <h2 class="results-title">
-                Jadwal Event Lari {{ selectedYear }}
-                <span v-if="selectedCategory !== 'all'" class="results-highlight">• {{ selectedCategory }}</span>
-                <span v-if="selectedMonth" class="results-highlight">• Bulan {{ getMonthName(selectedMonth) }}</span>
+            <div class="oxy-section-title">
+              <span class="oxy-subtitle">KATALOG PERLOMBAAN RESMI</span>
+              <h2 class="oxy-heading">
+                JADWAL EVENT LARI {{ selectedYear }}
+                <span v-if="selectedCategory !== 'all'" class="heading-accent"> / {{ selectedCategory }}</span>
+                <span v-if="selectedMonth" class="heading-accent"> / BULAN {{ getMonthName(selectedMonth).toUpperCase() }}</span>
               </h2>
-              <span class="results-counter">Menampilkan {{ totalRecords.toLocaleString('id-ID') }} event lari</span>
+              <span class="results-counter">Menampilkan {{ totalRecords.toLocaleString('id-ID') }} agenda perlombaan terverifikasi</span>
             </div>
 
-            <!-- Active filter chips -->
             <div v-if="hasActiveFilters" class="active-filters">
-              <span v-if="searchQuery" class="filter-chip">
-                Cari: "{{ searchQuery }}"
+              <span v-if="searchQuery" class="filter-chip-oxy">
+                CARI: "{{ searchQuery }}"
                 <button @click="searchQuery = ''">✕</button>
               </span>
-              <span v-if="selectedCategory !== 'all'" class="filter-chip">
+              <span v-if="selectedCategory !== 'all'" class="filter-chip-oxy">
                 {{ selectedCategory }}
                 <button @click="selectedCategory = 'all'">✕</button>
               </span>
-              <span v-if="selectedMonth" class="filter-chip">
+              <span v-if="selectedMonth" class="filter-chip-oxy">
                 {{ getMonthName(selectedMonth) }}
                 <button @click="selectedMonth = ''">✕</button>
               </span>
-              <button class="btn-clear-all" @click="resetFilters">Reset Filter</button>
+              <button class="btn-clear-all-oxy" @click="resetFilters">RESET FILTER</button>
             </div>
           </div>
 
-          <!-- Loading State -->
-          <div v-if="isLoading" class="loading-state">
-            <div class="spinner"></div>
-            <p>Memuat jadwal lomba lari...</p>
+          <div v-if="isLoading" class="loading-state-oxy">
+            <div class="spinner-oxy"></div>
+            <p>MEMUAT JADWAL EVENT LARI...</p>
           </div>
 
-          <!-- Empty State -->
-          <div v-else-if="events.length === 0" class="empty-results">
-            <span class="empty-icon">🔍</span>
-            <h3>Tidak ada lomba yang cocok</h3>
-            <p>Coba gunakan kata kunci lain atau ubah filter tahun / kategori lari Anda.</p>
-            <button class="btn-primary" @click="resetFilters" style="margin-top: 18px;">
-              Tampilkan Semua Lomba {{ selectedYear }}
+          <div v-else-if="events.length === 0" class="empty-results-oxy">
+            <div class="empty-icon-box">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <h3>TIDAK ADA PERLOMBAAN YANG SESUAI</h3>
+            <p>Tidak ada hasil untuk filter yang dipilih. Coba reset filter atau pilih tahun dan kategori lain.</p>
+            <button class="btn-oxy btn-oxy-primary" @click="resetFilters" style="margin-top: 18px;">
+              TAMPILKAN SEMUA LOMBA {{ selectedYear }}
             </button>
           </div>
 
-          <!-- Grid Card View -->
           <div v-else-if="viewMode === 'grid'" class="events-grid">
             <EventCard
               v-for="evt in events"
@@ -115,16 +131,15 @@
             />
           </div>
 
-          <!-- Table List View -->
           <div v-else-if="viewMode === 'table'" class="table-responsive">
             <table class="events-table">
               <thead>
                 <tr>
-                  <th>Tanggal</th>
-                  <th>Nama Lomba</th>
-                  <th>Kategori Jarak</th>
-                  <th>Lokasi / Kota</th>
-                  <th>Aksi</th>
+                  <th>TANGGAL</th>
+                  <th>NAMA PERLOMBAAN</th>
+                  <th>KATEGORI</th>
+                  <th>LOKASI / VENUE</th>
+                  <th style="text-align: right;">AKSI</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,28 +152,30 @@
                       <span class="table-title" @click="openEventDetail(evt)">
                         {{ evt.title }}
                       </span>
-                      <span v-if="evt.is_featured" class="badge badge-featured" style="font-size: 0.65rem;">
-                        Highlight
+                      <span v-if="evt.is_featured" class="badge-featured-mini">
+                        HIGHLIGHT
                       </span>
                     </div>
                   </td>
                   <td>
-                    <span class="badge badge-volt">{{ evt.category }}</span>
+                    <span class="table-cat-badge">{{ evt.category || 'Umum' }}</span>
                   </td>
                   <td>
                     <span class="table-loc">{{ evt.location }}</span>
                   </td>
                   <td>
-                    <div class="table-actions">
+                    <div class="table-actions-cell">
                       <button
-                        class="btn-icon"
-                        :title="isBookmarked(evt) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'"
+                        class="btn-table-bookmark"
+                        :title="isBookmarked(evt) ? 'Hapus dari Target' : 'Simpan ke Target'"
                         @click="toggleBookmark(evt)"
                       >
-                        {{ isBookmarked(evt) ? '❤️' : '🤍' }}
+                        <svg width="15" height="15" viewBox="0 0 24 24" :fill="isBookmarked(evt) ? '#FF5E13' : 'none'" stroke="currentColor" stroke-width="2">
+                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                        </svg>
                       </button>
-                      <button class="btn-detail-sm" @click="openEventDetail(evt)">
-                        Detail ↗
+                      <button class="btn-table-detail" @click="openEventDetail(evt)">
+                        DETAIL ↗
                       </button>
                     </div>
                   </td>
@@ -167,33 +184,31 @@
             </table>
           </div>
 
-          <!-- Pagination Controls -->
-          <div v-if="totalPages > 1" class="pagination-bar">
+          <div v-if="totalPages > 1" class="pagination-bar-oxy">
             <button
-              class="btn-page"
+              class="btn-page-oxy"
               :disabled="currentPage === 1"
               @click="goToPage(currentPage - 1)"
             >
-              ← Sebelumnya
+              ← SEBELUMNYA
             </button>
 
-            <span class="page-info">
-              Halaman <strong>{{ currentPage }}</strong> dari <strong>{{ totalPages }}</strong>
+            <span class="page-info-oxy">
+              HALAMAN <strong>{{ currentPage }}</strong> DARI <strong>{{ totalPages }}</strong>
             </span>
 
             <button
-              class="btn-page"
+              class="btn-page-oxy"
               :disabled="currentPage === totalPages"
               @click="goToPage(currentPage + 1)"
             >
-              Selanjutnya →
+              SELANJUTNYA →
             </button>
           </div>
         </div>
       </section>
     </main>
 
-    <!-- Modals -->
     <EventDetailModal
       :event="selectedEvent"
       :is-bookmarked="selectedEvent ? isBookmarked(selectedEvent) : false"
@@ -209,14 +224,12 @@
       @remove-bookmark="toggleBookmark"
     />
 
-    <!-- Toast Notification -->
     <transition name="toast-fade">
-      <div v-if="toastMessage" class="toast-popup">
-        {{ toastMessage }}
+      <div v-if="toastMessage" class="toast-popup-oxy">
+        <div class="toast-indicator"></div>
+        <span>{{ toastMessage }}</span>
       </div>
     </transition>
-
-
   </div>
 </template>
 
@@ -229,7 +242,6 @@ import EventCard from './components/EventCard.vue';
 import EventDetailModal from './components/EventDetailModal.vue';
 import WishlistModal from './components/WishlistModal.vue';
 
-// State Filter
 const selectedYear = ref('2026');
 const selectedMonth = ref('');
 const selectedCategory = ref('all');
@@ -239,7 +251,6 @@ const sortOrder = ref('asc');
 const currentPage = ref(1);
 const limit = ref(30);
 
-// State Data
 const events = ref([]);
 const totalRecords = ref(0);
 const totalPages = ref(1);
@@ -247,7 +258,6 @@ const stats = ref(null);
 const isLoading = ref(false);
 const healthInfo = ref({ supabaseConnected: false });
 
-// Modals & UI State
 const selectedEvent = ref(null);
 const isWishlistOpen = ref(false);
 const bookmarks = ref([]);
@@ -267,7 +277,6 @@ const hasActiveFilters = computed(() => {
   return searchQuery.value || selectedCategory.value !== 'all' || selectedMonth.value;
 });
 
-// Toast notification helper
 function showToast(msg) {
   toastMessage.value = msg;
   if (toastTimeout) clearTimeout(toastTimeout);
@@ -276,7 +285,6 @@ function showToast(msg) {
   }, 2800);
 }
 
-// Fetch Events dari API
 async function fetchEvents() {
   isLoading.value = true;
   try {
@@ -307,7 +315,6 @@ async function fetchEvents() {
   }
 }
 
-// Fetch Stats untuk tahun terpilih
 async function fetchStats() {
   try {
     const res = await fetch(`/api/stats?year=${selectedYear.value}`);
@@ -319,7 +326,6 @@ async function fetchStats() {
   }
 }
 
-// Fetch Health Info
 async function fetchHealth() {
   try {
     const res = await fetch('/api/health');
@@ -331,7 +337,6 @@ async function fetchHealth() {
   }
 }
 
-// Watchers
 watch([selectedYear, selectedMonth, selectedCategory, sortOrder], () => {
   currentPage.value = 1;
   fetchEvents();
@@ -341,7 +346,6 @@ watch(selectedYear, () => {
   fetchStats();
 });
 
-// Debounce search query
 let searchDebounce = null;
 watch(searchQuery, () => {
   if (searchDebounce) clearTimeout(searchDebounce);
@@ -384,7 +388,6 @@ function openEventDetail(event) {
   selectedEvent.value = event;
 }
 
-// Bookmarks / Wishlist Management
 function loadBookmarks() {
   try {
     const saved = localStorage.getItem('running_wishlist_indonesia');
@@ -412,10 +415,10 @@ function toggleBookmark(event) {
   const idx = bookmarks.value.findIndex(b => b.detail_url === event.detail_url);
   if (idx !== -1) {
     bookmarks.value.splice(idx, 1);
-    showToast(`🗑️ "${event.title}" dihapus dari Target Race.`);
+    showToast(`"${event.title}" dihapus dari Target Race.`);
   } else {
     bookmarks.value.push(event);
-    showToast(`❤️ "${event.title}" ditambahkan ke Target Race!`);
+    showToast(`"${event.title}" ditambahkan ke Target Race!`);
   }
   saveBookmarks();
 }
@@ -440,86 +443,99 @@ main {
   flex: 1;
 }
 
-/* Results Header */
+.events-section {
+  padding: 50px 0 80px;
+}
+
+@media (max-width: 640px) {
+  .hide-mobile {
+    display: none !important;
+  }
+}
+
 .results-header {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 28px;
+  gap: 20px;
+  margin-bottom: 32px;
+  border-bottom: 2px solid var(--border-color);
+  padding-bottom: 20px;
 }
 
-.results-title {
-  font-size: clamp(1.3rem, 3vw, 1.8rem);
-  font-weight: 900;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
-}
-
-.results-highlight {
-  color: var(--accent-primary);
+.heading-accent {
+  color: var(--oxy-orange);
 }
 
 .results-counter {
   font-size: 0.88rem;
-  color: var(--text-muted);
+  color: var(--text-body);
   font-weight: 600;
+  display: block;
+  margin-top: 4px;
 }
 
 .active-filters {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 10px;
-}
-
-.filter-chip {
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-medium);
-  color: var(--text-primary);
-  font-size: 0.8rem;
-  font-weight: 700;
-  padding: 5px 12px;
-  border-radius: var(--radius-full);
-  display: flex;
-  align-items: center;
   gap: 8px;
 }
 
-.filter-chip button {
-  color: var(--text-muted);
+.filter-chip-oxy {
+  background: var(--oxy-navy);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 5px 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-radius: 0px;
+  border-left: 2px solid var(--oxy-orange);
+}
+
+.filter-chip-oxy button {
+  color: var(--oxy-orange);
   font-size: 0.85rem;
+  font-weight: bold;
 }
 
-.filter-chip button:hover {
-  color: var(--accent-rose);
-}
-
-.btn-clear-all {
+.btn-clear-all-oxy {
+  font-family: var(--font-heading);
   font-size: 0.82rem;
-  color: var(--text-muted);
-  text-decoration: underline;
-  padding: 4px 8px;
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--oxy-orange);
+  letter-spacing: 0.06em;
+  padding: 5px 10px;
+  border: 1px solid var(--oxy-orange);
+  background: transparent;
+  transition: var(--transition-fast);
 }
 
-.btn-clear-all:hover {
-  color: var(--text-primary);
+.btn-clear-all-oxy:hover {
+  background: var(--oxy-orange);
+  color: #FFFFFF;
 }
 
-/* Loading & Empty */
-.loading-state {
+.loading-state-oxy {
   text-align: center;
   padding: 80px 20px;
-  color: var(--text-secondary);
+  color: var(--oxy-navy);
+  font-family: var(--font-heading);
+  font-size: 1.1rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
 }
 
-.spinner {
+.spinner-oxy {
   width: 44px;
   height: 44px;
-  border: 3px solid #E2E8F0;
-  border-top-color: var(--accent-black);
+  border: 4px solid var(--border-color);
+  border-top-color: var(--oxy-orange);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 18px;
@@ -529,143 +545,209 @@ main {
   to { transform: rotate(360deg); }
 }
 
-.empty-results {
+.empty-results-oxy {
   text-align: center;
-  padding: 60px 20px;
-  max-width: 520px;
+  padding: 60px 24px;
+  max-width: 580px;
   margin: 0 auto;
   background: #FFFFFF;
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-color);
+  border-top: 4px solid var(--oxy-orange);
+  border-radius: 0px;
   box-shadow: var(--shadow-card);
 }
 
-.empty-icon {
-  font-size: 3rem;
-  margin-bottom: 14px;
-  display: block;
+.empty-results-oxy h3 {
+  font-family: var(--font-heading);
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--oxy-navy);
+  margin-bottom: 8px;
 }
 
-/* Table Style */
+.empty-results-oxy p {
+  color: var(--text-body);
+  font-size: 0.95rem;
+}
+
+.empty-icon-box {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 18px;
+  background-color: var(--oxy-orange-light);
+  color: var(--oxy-orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .table-date {
-  font-weight: 800;
-  color: var(--text-primary);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--oxy-orange);
   white-space: nowrap;
 }
 
 .table-title-group {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .table-title {
-  font-weight: 800;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1.05rem;
   cursor: pointer;
-  color: var(--text-primary);
+  color: var(--oxy-navy);
+  letter-spacing: 0.02em;
   transition: var(--transition-fast);
 }
 
 .table-title:hover {
-  color: var(--accent-primary);
+  color: var(--oxy-orange);
+}
+
+.badge-featured-mini {
+  background: var(--oxy-orange);
+  color: #FFFFFF;
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 800;
+  padding: 2px 6px;
+  letter-spacing: 0.06em;
+}
+
+.table-cat-badge {
+  background: #EBF0F8;
+  color: var(--oxy-navy);
+  font-family: var(--font-heading);
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-left: 2px solid var(--oxy-navy);
 }
 
 .table-loc {
   font-size: 0.88rem;
-  color: var(--text-secondary);
+  color: var(--text-body);
 }
 
-.table-actions {
+.table-actions-cell {
   display: flex;
   align-items: center;
-  gap: 10px;
+  justify-content: flex-end;
+  gap: 8px;
 }
 
-.btn-icon {
-  font-size: 1rem;
-  padding: 6px 8px;
-  border-radius: var(--radius-full);
-  background: var(--bg-surface-soft);
-  border: 1px solid var(--border-subtle);
-  transition: var(--transition-fast);
-}
-
-.btn-icon:hover {
-  border-color: var(--accent-black);
-  transform: scale(1.1);
-}
-
-.btn-detail-sm {
-  font-size: 0.82rem;
-  font-weight: 800;
-  color: var(--text-primary);
-}
-
-.btn-detail-sm:hover {
-  color: var(--accent-primary);
-}
-
-/* Pagination */
-.pagination-bar {
+.btn-table-bookmark {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 24px;
-  margin-top: 48px;
-  padding-bottom: 48px;
-}
-
-.btn-page {
-  background: #FFFFFF;
-  border: 1px solid var(--border-medium);
-  color: var(--text-primary);
-  font-weight: 700;
-  padding: 11px 24px;
-  border-radius: var(--radius-full);
-  font-size: 0.9rem;
-  box-shadow: var(--shadow-subtle);
+  color: var(--oxy-navy);
   transition: var(--transition-fast);
 }
 
-.btn-page:hover:not(:disabled) {
-  border-color: var(--accent-black);
-  background: var(--accent-black);
+.btn-table-bookmark:hover {
+  border-color: var(--oxy-orange);
+  background: var(--oxy-orange-light);
+}
+
+.btn-table-detail {
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  background: var(--oxy-navy);
+  padding: 7px 12px;
+  letter-spacing: 0.05em;
+  transition: var(--transition-fast);
+}
+
+.btn-table-detail:hover {
+  background: var(--oxy-orange);
+}
+
+.pagination-bar-oxy {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 48px;
+}
+
+.btn-page-oxy {
+  background: #FFFFFF;
+  border: 1px solid var(--oxy-navy);
+  color: var(--oxy-navy);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  padding: 10px 22px;
+  border-radius: 0px;
+  transition: var(--transition-fast);
+}
+
+.btn-page-oxy:hover:not(:disabled) {
+  background: var(--oxy-navy);
   color: #FFFFFF;
 }
 
-.btn-page:disabled {
+.btn-page-oxy:disabled {
   opacity: 0.35;
   cursor: not-allowed;
 }
 
-.page-info {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
+.page-info-oxy {
+  font-family: var(--font-heading);
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text-body);
+  letter-spacing: 0.04em;
 }
 
-/* Toast */
-.toast-popup {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 1000;
-  background: var(--accent-black);
-  color: #FFFFFF;
-  box-shadow: var(--shadow-elevated);
-  padding: 15px 24px;
-  border-radius: var(--radius-full);
+.page-info-oxy strong {
+  color: var(--oxy-navy);
   font-weight: 800;
-  font-size: 0.92rem;
+}
+
+.toast-popup-oxy {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  z-index: 1000;
+  background: var(--oxy-navy);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 22px;
+  border-left: 4px solid var(--oxy-orange);
+  box-shadow: 0 10px 30px rgba(0, 23, 61, 0.3);
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+}
+
+.toast-indicator {
+  width: 8px;
+  height: 8px;
+  background: var(--oxy-orange);
 }
 
 .toast-fade-enter-active, .toast-fade-leave-active {
-  transition: all 0.28s ease;
+  transition: all 0.25s ease;
 }
 
 .toast-fade-enter-from, .toast-fade-leave-to {
   opacity: 0;
-  transform: translateY(18px);
+  transform: translateY(16px);
 }
-
-
 </style>
