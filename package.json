@@ -1,0 +1,29 @@
+{
+  "name": "running-calendar-indonesia",
+  "version": "1.0.0",
+  "description": "Highlight dan Jadwal Lengkap Event Lari di Indonesia (2018 - 2026)",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+    "dev:client": "vite",
+    "dev:server": "node server/local.js",
+    "build": "vite build",
+    "preview": "vite preview",
+    "scrape": "node scripts/scraper.js",
+    "start": "node server/local.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.43.4",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "lucide-vue-next": "^0.390.0",
+    "serverless-http": "^3.2.0",
+    "vue": "^3.4.27"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.4",
+    "concurrently": "^8.2.2",
+    "vite": "^5.2.11"
+  }
+}

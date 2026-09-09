@@ -1,0 +1,38 @@
+name: Auto Scraper Kalender Lari (Setiap 48 Jam)
+
+on:
+  schedule:
+    # Berjalan setiap 48 jam (pukul 00:00 UTC setiap 2 hari)
+    - cron: '0 0 */2 * *'
+  workflow_dispatch: # Memungkinkan tombol 'Run workflow' manual di GitHub
+
+jobs:
+  scrape-and-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Run Scraper & Upsert to Supabase
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/scraper.js
+
+      - name: Commit & Push Updated Seed Data
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/seed.json
+          git commit -m "chore(data): auto-update seed.json from kalenderlari [skip ci]" || echo "No changes to commit"
+          git push || echo "Push failed or nothing to push"
