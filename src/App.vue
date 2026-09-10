@@ -1,105 +1,120 @@
 <template>
   <div class="app-wrapper">
-    <header class="site-header">
-      <div class="container header-inner">
-        <div class="brand-wrap">
-          <div class="brand-icon-box">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <!-- World's Marathons Navigation Header -->
+    <header class="wm-navbar">
+      <div class="container wm-nav-inner">
+        <!-- Brand Logo & Name -->
+        <div class="wm-brand">
+          <div class="wm-logo-mark">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
               <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
             </svg>
           </div>
-          <div class="brand-title-group">
-            <div class="brand-title">Kalender<span>Lari</span></div>
-            <div class="brand-tagline">Direktori lomba lari Indonesia</div>
+          <div class="wm-brand-text">
+            <div class="wm-brand-title">KALENDER LARI<span>.ID</span></div>
+            <div class="wm-brand-tagline">INDONESIA RUNNING DIRECTORY</div>
           </div>
         </div>
 
-        <div class="header-status" :title="healthInfo.supabaseConnected ? 'Terhubung ke database live' : 'Menampilkan data cadangan'">
-          <span class="status-dot" :class="{ live: healthInfo.supabaseConnected }"></span>
-          <span class="hide-mobile">{{ healthInfo.supabaseConnected ? 'Data live' : 'Data lokal' }}</span>
+        <!-- Navigation Actions -->
+        <div class="wm-nav-actions">
+          <!-- Target Race (Wishlist) Button -->
+          <button class="btn-wm-wishlist" @click="isWishlistOpen = true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+            </svg>
+            <span class="hide-mobile">Target Race</span>
+            <span class="wm-badge-counter">{{ bookmarks.length }}</span>
+          </button>
         </div>
-
-        <button class="btn-wishlist" @click="isWishlistOpen = true">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
-          </svg>
-          <span class="hide-mobile">Target race</span>
-          <span class="wishlist-counter">{{ bookmarks.length }}</span>
-        </button>
       </div>
     </header>
 
+    <!-- Main Content -->
     <main>
+      <!-- World's Marathons Hero Section (Discovery & Search Console) -->
       <CountdownHero
         :featured-event="stats?.nextBigEvent || events[0]"
-        :is-live="healthInfo.supabaseConnected"
+        v-model:search-query="searchQuery"
+        v-model:selected-category="selectedCategory"
+        v-model:selected-month="selectedMonth"
+        v-model:selected-year="selectedYear"
         @select-featured="openEventDetail"
       />
 
+      <!-- Athletic Endurance Metrics -->
       <StatsBar
         :stats="stats"
         @select-category="handleCategorySelect"
         @filter-city="handleCityFilter"
       />
 
+      <!-- Filter Controls & View Switcher -->
       <FilterBar
         v-model:selected-year="selectedYear"
         v-model:selected-month="selectedMonth"
         v-model:selected-category="selectedCategory"
         v-model:search-query="searchQuery"
         v-model:view-mode="viewMode"
-        :sort-order="sortOrder"
-        @toggle-sort="toggleSort"
+        v-model:sort-order="sortOrder"
       />
 
-      <section class="events-section" id="events-section">
+      <!-- Events Catalog Section -->
+      <section class="events-catalog-section">
         <div class="container">
-          <div class="results-header">
-            <div class="results-heading-group">
+          <!-- Results Header & Active Filter Chips -->
+          <div class="results-header-bar">
+            <div class="results-info-group">
               <h2 class="results-heading">
-                Jadwal lomba {{ selectedYear }}
-                <span v-if="selectedCategory !== 'all'" class="heading-accent">· {{ selectedCategory }}</span>
-                <span v-if="selectedMonth" class="heading-accent">· {{ getMonthName(selectedMonth) }}</span>
+                Jadwal Event Lari {{ selectedYear }}
+                <span v-if="selectedCategory !== 'all'" class="heading-accent"> • {{ selectedCategory }}</span>
+                <span v-if="selectedMonth" class="heading-accent"> • Bulan {{ getMonthName(selectedMonth) }}</span>
               </h2>
-              <span class="results-counter">{{ totalRecords.toLocaleString('id-ID') }} lomba ditemukan</span>
+              <span class="results-subcount">
+                Menemukan <strong>{{ totalRecords.toLocaleString('id-ID') }}</strong> jadwal lomba terdaftar
+              </span>
             </div>
 
-            <div v-if="hasActiveFilters" class="active-filters">
-              <span v-if="searchQuery" class="filter-chip">
-                "{{ searchQuery }}"
-                <button @click="searchQuery = ''" aria-label="Hapus pencarian">✕</button>
+            <!-- Active Filters Reset Strip -->
+            <div v-if="hasActiveFilters" class="active-chips-strip">
+              <span v-if="searchQuery" class="active-chip">
+                Cari: "{{ searchQuery }}"
+                <button @click="searchQuery = ''">✕</button>
               </span>
-              <span v-if="selectedCategory !== 'all'" class="filter-chip">
+              <span v-if="selectedCategory !== 'all'" class="active-chip">
                 {{ selectedCategory }}
-                <button @click="selectedCategory = 'all'" aria-label="Hapus kategori">✕</button>
+                <button @click="selectedCategory = 'all'">✕</button>
               </span>
-              <span v-if="selectedMonth" class="filter-chip">
-                {{ getMonthName(selectedMonth) }}
-                <button @click="selectedMonth = ''" aria-label="Hapus bulan">✕</button>
+              <span v-if="selectedMonth" class="active-chip">
+                Bulan {{ getMonthName(selectedMonth) }}
+                <button @click="selectedMonth = ''">✕</button>
               </span>
-              <button class="btn-clear-all" @click="resetFilters">Reset filter</button>
+              <button class="btn-clear-chips" @click="resetFilters">Reset Filter</button>
             </div>
           </div>
 
-          <div v-if="isLoading" class="loading-state">
-            <div class="spinner"></div>
-            <p>Memuat jadwal lomba…</p>
+          <!-- Loading State -->
+          <div v-if="isLoading" class="loading-state-wm">
+            <div class="wm-spinner"></div>
+            <p>Memuat jadwal lomba lari...</p>
           </div>
 
-          <div v-else-if="events.length === 0" class="empty-results">
-            <div class="empty-icon-box">
-              <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <!-- Empty State -->
+          <div v-else-if="events.length === 0" class="empty-state-card">
+            <div class="empty-search-icon">
+              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
             </div>
-            <h3>Belum ada lomba yang cocok</h3>
-            <p>Coba ganti filter, atau reset untuk melihat semua jadwal tahun {{ selectedYear }}.</p>
-            <button class="btn btn-primary" @click="resetFilters" style="margin-top: 18px;">
-              Tampilkan semua lomba {{ selectedYear }}
+            <h3>Tidak Ada Lomba Yang Cocok</h3>
+            <p>Coba gunakan kata kunci kota lain atau reset filter untuk melihat semua lomba di tahun {{ selectedYear }}.</p>
+            <button class="btn-wm btn-wm-primary" @click="resetFilters" style="margin-top: 16px;">
+              Tampilkan Semua Lomba {{ selectedYear }}
             </button>
           </div>
 
+          <!-- VIEW 1: Grid Cards (World's Marathons Style) -->
           <div v-else-if="viewMode === 'grid'" class="events-grid">
             <EventCard
               v-for="evt in events"
@@ -111,85 +126,100 @@
             />
           </div>
 
-          <div v-else-if="viewMode === 'table'" class="table-responsive">
-            <table class="events-table">
-              <thead>
-                <tr>
-                  <th>Tanggal</th>
-                  <th>Nama lomba</th>
-                  <th>Kategori</th>
-                  <th>Lokasi</th>
-                  <th style="text-align: right;">Aksi</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="evt in events" :key="evt.detail_url || evt.id">
-                  <td>
-                    <span class="table-date">{{ evt.date_text }}</span>
-                  </td>
-                  <td>
-                    <div class="table-title-group">
-                      <span class="table-title" @click="openEventDetail(evt)">
-                        {{ evt.title }}
-                      </span>
-                      <span v-if="evt.is_featured" class="badge-featured-mini">
-                        Unggulan
-                      </span>
-                    </div>
-                  </td>
-                  <td>
-                    <span class="table-cat-badge">{{ evt.category || 'Umum' }}</span>
-                  </td>
-                  <td>
-                    <span class="table-loc">{{ evt.location }}</span>
-                  </td>
-                  <td>
-                    <div class="table-actions-cell">
-                      <button
-                        class="btn-table-bookmark"
-                        :class="{ bookmarked: isBookmarked(evt) }"
-                        :title="isBookmarked(evt) ? 'Hapus dari target' : 'Simpan ke target'"
-                        @click="toggleBookmark(evt)"
-                      >
-                        <svg width="15" height="15" viewBox="0 0 24 24" :fill="isBookmarked(evt) ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
-                          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
-                        </svg>
-                      </button>
-                      <button class="btn-table-detail" @click="openEventDetail(evt)">
-                        Detail
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <!-- VIEW 2: Timeline / Calendar List (Ahotu Style) -->
+          <div v-else-if="viewMode === 'timeline'" class="events-timeline-list">
+            <div
+              v-for="evt in events"
+              :key="evt.detail_url || evt.id"
+              class="timeline-item"
+            >
+              <!-- Left: Ahotu Date Block -->
+              <div class="date-block-ahotu">
+                <span class="date-day">{{ getDayNumber(evt.date_text, evt.start_date) }}</span>
+                <span class="date-month">{{ getMonthAbbr(evt.date_text, evt.start_date) }}</span>
+                <span class="date-year">{{ evt.year }}</span>
+              </div>
+
+              <!-- Center: Race Details -->
+              <div class="timeline-center" @click="openEventDetail(evt)">
+                <div class="timeline-meta-top">
+                  <span v-if="evt.is_featured" class="badge-featured" style="font-size: 0.7rem; padding: 2px 8px;">
+                    ★ Highlight
+                  </span>
+                  <div class="timeline-badges-flow">
+                    <span
+                      v-for="cat in parseCategories(evt.category)"
+                      :key="cat"
+                      class="dist-badge"
+                      :class="getCategoryClass(cat)"
+                    >
+                      {{ cat }}
+                    </span>
+                  </div>
+                </div>
+
+                <h3 class="timeline-title">{{ evt.title }}</h3>
+
+                <div class="timeline-loc-row">
+                  <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                    <circle cx="12" cy="10" r="3"></circle>
+                  </svg>
+                  <span>{{ evt.location }}</span>
+                  <span v-if="evt.city && evt.city !== 'Lainnya'" class="city-tag">{{ evt.city }}</span>
+                </div>
+              </div>
+
+              <!-- Right: Actions -->
+              <div class="timeline-actions">
+                <button
+                  class="btn-bookmark-heart"
+                  :class="{ active: isBookmarked(evt) }"
+                  :title="isBookmarked(evt) ? 'Hapus dari Target' : 'Simpan Target Race'"
+                  @click="toggleBookmark(evt)"
+                >
+                  <svg width="18" height="18" viewBox="0 0 24 24" :fill="isBookmarked(evt) ? '#E11D48' : 'none'" :stroke="isBookmarked(evt) ? '#E11D48' : 'currentColor'" stroke-width="2">
+                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                  </svg>
+                </button>
+
+                <button class="btn-wm btn-wm-secondary" style="padding: 8px 16px; font-size: 0.85rem;" @click="openEventDetail(evt)">
+                  <span>Detail</span>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                    <path d="M5 12h14M12 5l7 7-7 7"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
           </div>
 
-          <div v-if="totalPages > 1" class="pagination-bar">
+          <!-- Pagination Bar -->
+          <div v-if="totalPages > 1" class="wm-pagination">
             <button
-              class="btn-page"
+              class="btn-wm-page"
               :disabled="currentPage === 1"
               @click="goToPage(currentPage - 1)"
             >
-              Sebelumnya
+              ← Sebelumnya
             </button>
 
-            <span class="page-info">
+            <span class="page-numbers">
               Halaman <strong>{{ currentPage }}</strong> dari <strong>{{ totalPages }}</strong>
             </span>
 
             <button
-              class="btn-page"
+              class="btn-wm-page"
               :disabled="currentPage === totalPages"
               @click="goToPage(currentPage + 1)"
             >
-              Selanjutnya
+              Selanjutnya →
             </button>
           </div>
         </div>
       </section>
     </main>
 
+    <!-- Modals -->
     <EventDetailModal
       :event="selectedEvent"
       :is-bookmarked="selectedEvent ? isBookmarked(selectedEvent) : false"
@@ -205,9 +235,10 @@
       @remove-bookmark="toggleBookmark"
     />
 
+    <!-- Toast Notification -->
     <transition name="toast-fade">
-      <div v-if="toastMessage" class="toast-popup">
-        <div class="toast-indicator"></div>
+      <div v-if="toastMessage" class="wm-toast">
+        <div class="toast-dot"></div>
         <span>{{ toastMessage }}</span>
       </div>
     </transition>
@@ -223,15 +254,17 @@ import EventCard from './components/EventCard.vue';
 import EventDetailModal from './components/EventDetailModal.vue';
 import WishlistModal from './components/WishlistModal.vue';
 
+// State Filter
 const selectedYear = ref('2026');
 const selectedMonth = ref('');
 const selectedCategory = ref('all');
 const searchQuery = ref('');
 const viewMode = ref('grid');
-const sortOrder = ref('asc');
+const sortOrder = ref('upcoming');
 const currentPage = ref(1);
 const limit = ref(30);
 
+// State Data
 const events = ref([]);
 const totalRecords = ref(0);
 const totalPages = ref(1);
@@ -239,6 +272,7 @@ const stats = ref(null);
 const isLoading = ref(false);
 const healthInfo = ref({ supabaseConnected: false });
 
+// Modals & UI State
 const selectedEvent = ref(null);
 const isWishlistOpen = ref(false);
 const bookmarks = ref([]);
@@ -251,7 +285,7 @@ const monthsNames = [
 ];
 
 function getMonthName(m) {
-  return monthsNames[parseInt(m) - 1] || '';
+  return monthsNames[parseInt(m, 10) - 1] || '';
 }
 
 const hasActiveFilters = computed(() => {
@@ -266,6 +300,7 @@ function showToast(msg) {
   }, 2800);
 }
 
+// Fetch Events dari API
 async function fetchEvents() {
   isLoading.value = true;
   try {
@@ -296,6 +331,7 @@ async function fetchEvents() {
   }
 }
 
+// Fetch Stats untuk tahun terpilih
 async function fetchStats() {
   try {
     const res = await fetch(`/api/stats?year=${selectedYear.value}`);
@@ -307,6 +343,7 @@ async function fetchStats() {
   }
 }
 
+// Fetch Health Info
 async function fetchHealth() {
   try {
     const res = await fetch('/api/health');
@@ -318,15 +355,22 @@ async function fetchHealth() {
   }
 }
 
+// Watchers
 watch([selectedYear, selectedMonth, selectedCategory, sortOrder], () => {
   currentPage.value = 1;
   fetchEvents();
 });
 
-watch(selectedYear, () => {
+watch(selectedYear, (newYear) => {
+  if (newYear === '2026') {
+    sortOrder.value = 'upcoming';
+  } else {
+    sortOrder.value = 'asc';
+  }
   fetchStats();
 });
 
+// Debounce search query
 let searchDebounce = null;
 watch(searchQuery, () => {
   if (searchDebounce) clearTimeout(searchDebounce);
@@ -342,12 +386,14 @@ function toggleSort() {
 
 function handleCategorySelect(catName) {
   selectedCategory.value = catName;
-  window.scrollTo({ top: 650, behavior: 'smooth' });
+  const el = document.getElementById('events-catalog');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
 function handleCityFilter(cityName) {
   searchQuery.value = cityName;
-  window.scrollTo({ top: 650, behavior: 'smooth' });
+  const el = document.getElementById('events-catalog');
+  if (el) el.scrollIntoView({ behavior: 'smooth' });
 }
 
 function resetFilters() {
@@ -361,7 +407,8 @@ function goToPage(page) {
   if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
     fetchEvents();
-    window.scrollTo({ top: 650, behavior: 'smooth' });
+    const el = document.getElementById('events-catalog');
+    if (el) el.scrollIntoView({ behavior: 'smooth' });
   }
 }
 
@@ -369,6 +416,7 @@ function openEventDetail(event) {
   selectedEvent.value = event;
 }
 
+// Bookmarks / Target Race Management
 function loadBookmarks() {
   try {
     const saved = localStorage.getItem('running_wishlist_indonesia');
@@ -396,12 +444,61 @@ function toggleBookmark(event) {
   const idx = bookmarks.value.findIndex(b => b.detail_url === event.detail_url);
   if (idx !== -1) {
     bookmarks.value.splice(idx, 1);
-    showToast(`"${event.title}" dihapus dari target race.`);
+    showToast(`"${event.title}" dihapus dari Target Race.`);
   } else {
     bookmarks.value.push(event);
-    showToast(`"${event.title}" ditambahkan ke target race.`);
+    showToast(`"${event.title}" ditambahkan ke Target Race!`);
   }
   saveBookmarks();
+}
+
+// Timeline View Helpers
+function getDayNumber(dateText, startDate) {
+  if (startDate) {
+    const parts = startDate.split('-');
+    if (parts.length === 3) return parts[2];
+  }
+  if (dateText) {
+    const match = dateText.match(/^\d+/);
+    if (match) return match[0];
+  }
+  return '•';
+}
+
+function getMonthAbbr(dateText, startDate) {
+  const monthsAbbr = ['JAN', 'FEB', 'MAR', 'APR', 'MEI', 'JUN', 'JUL', 'AGU', 'SEP', 'OKT', 'NOV', 'DES'];
+  if (startDate) {
+    const parts = startDate.split('-');
+    if (parts.length === 3) {
+      const mIdx = parseInt(parts[1], 10) - 1;
+      return monthsAbbr[mIdx] || '';
+    }
+  }
+  if (dateText) {
+    for (let i = 0; i < monthsNames.length; i++) {
+      if (dateText.toLowerCase().includes(monthsNames[i].toLowerCase())) {
+        return monthsAbbr[i];
+      }
+    }
+  }
+  return 'RACE';
+}
+
+function parseCategories(catStr) {
+  if (!catStr) return ['Umum'];
+  return catStr.split(',').map(s => s.trim()).filter(Boolean);
+}
+
+function getCategoryClass(catName) {
+  if (!catName) return 'default';
+  const c = catName.toLowerCase();
+  if (c.includes('42') || c.includes('full') || c.includes('marathon')) return 'marathon';
+  if (c.includes('21') || c.includes('half')) return 'half';
+  if (c.includes('10k') || c.includes('10 k')) return 'tenk';
+  if (c.includes('5k') || c.includes('5 k')) return 'fivek';
+  if (c.includes('trail')) return 'trail';
+  if (c.includes('ultra')) return 'ultra';
+  return 'default';
 }
 
 onMounted(() => {
@@ -417,117 +514,11 @@ onMounted(() => {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
-  background-color: var(--bg-main);
+  background-color: var(--wm-bg);
 }
 
 main {
   flex: 1;
-}
-
-.site-header {
-  position: sticky;
-  top: 0;
-  z-index: 100;
-  background: var(--paper);
-  border-bottom: 1px solid var(--border-color);
-}
-
-.header-inner {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding-top: 14px;
-  padding-bottom: 14px;
-}
-
-.brand-wrap {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.brand-icon-box {
-  width: 36px;
-  height: 36px;
-  background-color: var(--accent);
-  color: #FFFFFF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: var(--radius-sm);
-  flex-shrink: 0;
-}
-
-.brand-title-group {
-  display: flex;
-  flex-direction: column;
-  line-height: 1.15;
-}
-
-.brand-title {
-  font-family: var(--font-heading);
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: var(--ink);
-}
-
-.brand-title span {
-  color: var(--accent);
-}
-
-.brand-tagline {
-  font-size: 0.76rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-.header-status {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  margin-left: auto;
-  font-size: 0.82rem;
-  color: var(--text-body);
-  padding: 6px 12px;
-  background: var(--surface);
-  border-radius: var(--radius-pill);
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: var(--ink-faint);
-}
-
-.status-dot.live {
-  background: var(--trail);
-  box-shadow: 0 0 0 3px var(--trail-soft);
-}
-
-.btn-wishlist {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background-color: var(--ink);
-  color: #FFFFFF;
-  padding: 9px 16px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
-}
-
-.btn-wishlist:hover {
-  background-color: var(--accent);
-}
-
-.wishlist-counter {
-  background-color: rgba(255, 255, 255, 0.2);
-  padding: 1px 8px;
-  font-size: 0.78rem;
-  font-weight: 700;
-  border-radius: var(--radius-pill);
 }
 
 @media (max-width: 640px) {
@@ -536,111 +527,97 @@ main {
   }
 }
 
-.events-section {
-  padding: 44px 0 80px;
+.events-catalog-section {
+  padding-bottom: 80px;
 }
 
-.results-header {
+/* Results Header */
+.results-header-bar {
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
   flex-wrap: wrap;
-  gap: 20px;
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--border-color);
+  gap: 16px;
+  margin-bottom: 24px;
 }
 
 .results-heading {
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: var(--wm-dark);
 }
 
 .heading-accent {
-  color: var(--accent);
+  color: var(--wm-brand);
 }
 
-.results-counter {
+.results-subcount {
   font-size: 0.9rem;
-  color: var(--text-muted);
+  color: var(--wm-text-body);
   display: block;
   margin-top: 4px;
 }
 
-.active-filters {
+.results-subcount strong {
+  color: var(--wm-dark);
+}
+
+/* Active Chips */
+.active-chips-strip {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
 }
 
-.filter-chip {
-  background: var(--surface);
-  color: var(--ink);
-  font-size: 0.82rem;
-  font-weight: 500;
-  padding: 6px 12px;
-  display: flex;
+.active-chip {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  border-radius: var(--radius-pill);
+  gap: 6px;
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  padding: 5px 12px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--wm-dark);
+  box-shadow: var(--shadow-sm);
 }
 
-.filter-chip button {
-  color: var(--text-muted);
+.active-chip button {
+  color: var(--wm-text-muted);
   font-size: 0.85rem;
 }
 
-.filter-chip button:hover {
-  color: var(--accent);
+.active-chip button:hover {
+  color: var(--wm-brand);
 }
 
-.btn-clear-all {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--accent);
-  padding: 6px 12px;
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
+.btn-clear-chips {
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--wm-brand);
+  text-decoration: underline;
+  padding: 4px 8px;
 }
 
-.btn-clear-all:hover {
-  background: var(--accent-soft);
-}
-
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  font-weight: 600;
-  font-size: 0.92rem;
-  padding: 11px 22px;
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
-}
-
-.btn-primary {
-  background-color: var(--accent);
-  color: #FFFFFF;
-}
-
-.btn-primary:hover {
-  background-color: var(--accent-dark);
-}
-
-.loading-state {
+/* Loading & Empty */
+.loading-state-wm {
   text-align: center;
   padding: 80px 20px;
-  color: var(--text-muted);
-  font-size: 0.95rem;
+  color: var(--wm-dark-muted);
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
 }
 
-.spinner {
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--border-color);
-  border-top-color: var(--accent);
+.wm-spinner {
+  width: 42px;
+  height: 42px;
+  border: 3px solid var(--wm-border);
+  border-top-color: var(--wm-brand);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   margin: 0 auto 16px;
@@ -650,228 +627,167 @@ main {
   to { transform: rotate(360deg); }
 }
 
-.empty-results {
+.empty-state-card {
   text-align: center;
-  padding: 56px 24px;
-  max-width: 480px;
+  padding: 60px 24px;
+  max-width: 540px;
   margin: 0 auto;
-  background: var(--paper);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-lg);
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-card);
 }
 
-.empty-results h3 {
-  font-size: 1.2rem;
+.empty-search-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 16px;
+  background: #F1F5F9;
+  color: var(--wm-text-muted);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-card h3 {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--wm-dark);
+  margin-bottom: 8px;
+}
+
+.empty-state-card p {
+  color: var(--wm-text-body);
+  font-size: 0.95rem;
+}
+
+/* Timeline Center Details */
+.timeline-center {
+  cursor: pointer;
+}
+
+.timeline-meta-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
   margin-bottom: 6px;
 }
 
-.empty-results p {
-  color: var(--text-muted);
-  font-size: 0.92rem;
-}
-
-.empty-icon-box {
-  width: 52px;
-  height: 52px;
-  margin: 0 auto 16px;
-  background-color: var(--surface);
-  color: var(--text-muted);
+.timeline-badges-flow {
   display: flex;
   align-items: center;
-  justify-content: center;
-  border-radius: 50%;
+  gap: 6px;
+  flex-wrap: wrap;
 }
 
-.table-responsive {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-md);
-  background-color: var(--paper);
-}
-
-.events-table {
-  width: 100%;
-  border-collapse: collapse;
-  text-align: left;
-}
-
-.events-table th {
-  background-color: var(--surface);
-  color: var(--text-muted);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 12px 18px;
-  border-bottom: 1px solid var(--border-color);
-}
-
-.events-table td {
-  padding: 15px 18px;
-  border-bottom: 1px solid var(--border-color);
-  font-size: 0.92rem;
-  color: var(--text-body);
-}
-
-.events-table tr:last-child td {
-  border-bottom: none;
-}
-
-.events-table tr:hover td {
-  background-color: var(--surface);
-}
-
-.table-date {
-  font-weight: 600;
-  color: var(--accent);
-  white-space: nowrap;
-  font-size: 0.85rem;
-}
-
-.table-title-group {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.table-title {
-  font-weight: 600;
-  cursor: pointer;
-  color: var(--ink);
+.timeline-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: var(--wm-dark);
+  line-height: 1.3;
+  margin-bottom: 6px;
   transition: var(--transition-fast);
 }
 
-.table-title:hover {
-  color: var(--accent);
+.timeline-item:hover .timeline-title {
+  color: var(--wm-brand);
 }
 
-.badge-featured-mini {
-  background: var(--accent-soft);
-  color: var(--accent-ink);
-  font-size: 0.68rem;
+.timeline-loc-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.86rem;
+  color: var(--wm-text-body);
+}
+
+.timeline-loc-row svg {
+  color: var(--wm-text-muted);
+}
+
+.city-tag {
+  background: #F1F5F9;
+  color: var(--wm-dark-muted);
+  font-size: 0.72rem;
   font-weight: 700;
-  padding: 2px 7px;
-  border-radius: var(--radius-pill);
-}
-
-.table-cat-badge {
-  background: var(--surface);
-  color: var(--ink-soft);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 3px 10px;
-  border-radius: var(--radius-pill);
-}
-
-.table-loc {
-  font-size: 0.88rem;
-  color: var(--text-body);
-}
-
-.table-actions-cell {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 8px;
-}
-
-.btn-table-bookmark {
-  background: var(--paper);
-  border: 1px solid var(--border-color);
-  width: 32px;
-  height: 32px;
+  padding: 1px 7px;
   border-radius: var(--radius-sm);
+}
+
+.timeline-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Pagination */
+.wm-pagination {
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--ink-faint);
-  transition: var(--transition-fast);
+  gap: 20px;
+  margin-top: 44px;
 }
 
-.btn-table-bookmark:hover {
-  border-color: var(--accent);
-  color: var(--accent);
-}
-
-.btn-table-bookmark.bookmarked {
-  background: var(--accent-soft);
-  color: var(--accent);
-  border-color: var(--accent-soft);
-}
-
-.btn-table-detail {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--ink);
-  background: var(--surface);
-  padding: 7px 14px;
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
-}
-
-.btn-table-detail:hover {
-  background: var(--ink);
-  color: #FFFFFF;
-}
-
-.pagination-bar {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 18px;
-  margin-top: 40px;
-}
-
-.btn-page {
-  background: var(--paper);
-  border: 1px solid var(--border-color);
-  color: var(--ink);
-  font-weight: 600;
+.btn-wm-page {
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  color: var(--wm-dark);
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 0.88rem;
-  padding: 9px 18px;
-  border-radius: var(--radius-pill);
+  padding: 10px 20px;
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-sm);
   transition: var(--transition-fast);
 }
 
-.btn-page:hover:not(:disabled) {
-  border-color: var(--ink);
+.btn-wm-page:hover:not(:disabled) {
+  border-color: var(--wm-dark);
+  transform: translateY(-1px);
 }
 
-.btn-page:disabled {
-  opacity: 0.4;
+.btn-wm-page:disabled {
+  opacity: 0.35;
   cursor: not-allowed;
 }
 
-.page-info {
-  font-size: 0.88rem;
-  color: var(--text-muted);
+.page-numbers {
+  font-family: var(--font-display);
+  font-size: 0.9rem;
+  color: var(--wm-text-body);
 }
 
-.page-info strong {
-  color: var(--ink);
+.page-numbers strong {
+  color: var(--wm-dark);
 }
 
-.toast-popup {
+/* Toast */
+.wm-toast {
   position: fixed;
   bottom: 28px;
   right: 28px;
   z-index: 1000;
-  background: var(--ink);
+  background: #0F172A;
   color: #FFFFFF;
+  border-radius: var(--radius-full);
+  padding: 12px 22px;
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 20px;
-  border-radius: var(--radius-md);
-  box-shadow: var(--shadow-hover);
-  font-weight: 500;
-  font-size: 0.9rem;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 700;
+  box-shadow: var(--shadow-dropdown);
 }
 
-.toast-indicator {
-  width: 7px;
-  height: 7px;
+.toast-dot {
+  width: 8px;
+  height: 8px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--wm-brand);
 }
 
 .toast-fade-enter-active, .toast-fade-leave-active {
@@ -880,6 +796,6 @@ main {
 
 .toast-fade-enter-from, .toast-fade-leave-to {
   opacity: 0;
-  transform: translateY(16px);
+  transform: translateY(14px);
 }
 </style>

@@ -1,107 +1,118 @@
 <template>
   <div v-if="event" class="modal-overlay" @click.self="$emit('close')">
-    <div class="modal-content modal-box">
-      <div class="modal-header">
-        <div class="modal-tag-row">
-          <span class="spec-badge">{{ event.year }}</span>
-          <span v-if="event.is_featured" class="featured-badge">
-            Lomba unggulan
+    <div class="modal-content wm-modal-box">
+      <!-- Modal Header -->
+      <div class="modal-header-wm">
+        <div class="header-badges-row">
+          <span class="badge-year">Tahun {{ event.year }}</span>
+          <span v-if="event.is_featured" class="badge-featured-modal">
+            ★ Highlight Race
           </span>
-          <span class="cat-badge">{{ event.category || 'Umum' }}</span>
+          <span class="badge-cat-modal">{{ event.category || 'Road Race' }}</span>
         </div>
-        <button class="btn-close" @click="$emit('close')" aria-label="Tutup">✕</button>
+        <button class="btn-close-wm" @click="$emit('close')" aria-label="Tutup">
+          ✕
+        </button>
       </div>
 
-      <div class="modal-title-banner">
+      <!-- Title Area -->
+      <div class="modal-title-area">
+        <span class="event-type-pretitle">INFORMASI RESMI PERLOMBAAN</span>
         <h2 class="modal-event-title">{{ event.title }}</h2>
       </div>
 
-      <div class="modal-body">
+      <!-- Specs & Detail Grid -->
+      <div class="modal-body-wm">
         <div class="specs-grid">
+          <!-- Jadwal Pelaksanaan -->
           <div class="spec-card">
             <div class="spec-icon-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
             </div>
-            <div class="spec-details">
-              <span class="spec-label">Jadwal pelaksanaan</span>
-              <span class="spec-val">{{ event.date_text }}</span>
+            <div class="spec-info">
+              <span class="spec-label">JADWAL PELAKSANAAN</span>
+              <span class="spec-value">{{ event.date_text }}</span>
             </div>
           </div>
 
+          <!-- Kategori & Jarak -->
           <div class="spec-card">
             <div class="spec-icon-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"></path>
               </svg>
             </div>
-            <div class="spec-details">
-              <span class="spec-label">Kategori & jarak</span>
-              <span class="spec-val">{{ event.category || 'Umum / fun run' }}</span>
+            <div class="spec-info">
+              <span class="spec-label">KATEGORI & JARAK</span>
+              <span class="spec-value">{{ event.category || 'Umum / Fun Run' }}</span>
             </div>
           </div>
 
+          <!-- Lokasi / Venue Full Width -->
           <div class="spec-card spec-card-full">
             <div class="spec-icon-box">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
                 <circle cx="12" cy="10" r="3"></circle>
               </svg>
             </div>
-            <div class="spec-details">
-              <span class="spec-label">Venue & lokasi</span>
-              <span class="spec-val">{{ event.location }}</span>
-              <span v-if="event.city" class="spec-city-tag">Kota: {{ event.city }}</span>
+            <div class="spec-info">
+              <span class="spec-label">VENUE & LOKASI PERLOMBAAN</span>
+              <span class="spec-value">{{ event.location }}</span>
+              <span v-if="event.city" class="spec-city-sub">Kota / Wilayah: {{ event.city }}</span>
               <a
                 :href="mapsUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="maps-action-link"
+                class="maps-btn-link"
               >
-                Petunjuk arah di Google Maps
+                <span>Buka Rute di Google Maps ↗</span>
               </a>
             </div>
           </div>
         </div>
 
-        <div class="modal-actions">
+        <!-- Actions Row -->
+        <div class="modal-actions-wm">
           <a
             :href="event.detail_url"
             target="_blank"
             rel="noopener noreferrer"
-            class="btn btn-primary btn-block"
+            class="btn-wm btn-wm-primary btn-action-block"
           >
-            Sumber resmi & registrasi
+            <span>Halaman Sumber & Info Pendaftaran ↗</span>
           </a>
 
-          <div class="secondary-actions-row">
+          <div class="secondary-btn-group">
             <a
               :href="googleCalendarUrl"
               target="_blank"
               rel="noopener noreferrer"
-              class="btn btn-secondary flex-1"
+              class="btn-wm btn-wm-secondary flex-1"
             >
-              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="4" width="18" height="18" rx="2"></rect>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
                 <line x1="16" y1="2" x2="16" y2="6"></line>
                 <line x1="8" y1="2" x2="8" y2="6"></line>
                 <line x1="3" y1="10" x2="21" y2="10"></line>
               </svg>
-              Tambah ke calendar
+              <span>Tambah ke Google Calendar</span>
             </a>
 
             <button
-              class="btn btn-dark flex-1"
+              class="btn-wm btn-wm-secondary flex-1"
+              :class="{ 'is-saved': isBookmarked }"
               @click="$emit('toggle-bookmark', event)"
             >
-              <svg width="17" height="17" viewBox="0 0 24 24" :fill="isBookmarked ? 'currentColor' : 'none'" stroke="currentColor" stroke-width="2">
+              <svg width="18" height="18" viewBox="0 0 24 24" :fill="isBookmarked ? '#E11D48' : 'none'" :stroke="isBookmarked ? '#E11D48' : 'currentColor'" stroke-width="2">
                 <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
               </svg>
-              {{ isBookmarked ? 'Hapus dari target' : 'Simpan ke target' }}
+              <span>{{ isBookmarked ? 'Hapus Target Race' : 'Simpan Target Race' }}</span>
             </button>
           </div>
         </div>
@@ -136,8 +147,8 @@ const googleCalendarUrl = computed(() => {
   if (!props.event) return '#';
   const title = encodeURIComponent(props.event.title);
   const location = encodeURIComponent(props.event.location);
-  const details = encodeURIComponent(`Jadwal lomba lari: ${props.event.title}\nKategori: ${props.event.category}\nInfo: ${props.event.detail_url}`);
-
+  const details = encodeURIComponent(`Jadwal Event Lari: ${props.event.title}\nKategori: ${props.event.category}\nInfo: ${props.event.detail_url}`);
+  
   let datesParam = '';
   if (props.event.start_date) {
     const dStr = props.event.start_date.replace(/-/g, '');
@@ -148,122 +159,112 @@ const googleCalendarUrl = computed(() => {
 </script>
 
 <style scoped>
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  z-index: 999;
-  background-color: rgba(21, 23, 28, 0.55);
-  backdrop-filter: blur(3px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.modal-content {
-  max-width: 640px;
-  width: 100%;
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: modalIn 0.2s ease-out;
-}
-
-@keyframes modalIn {
-  from {
-    opacity: 0;
-    transform: translateY(14px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.modal-box {
-  background-color: var(--paper);
-  border-radius: var(--radius-lg);
+.wm-modal-box {
+  background: #FFFFFF;
+  border-radius: var(--radius-xl);
   overflow: hidden;
 }
 
-.modal-header {
-  padding: 18px 24px;
+/* Header */
+.modal-header-wm {
+  background: #F8FAFC;
+  padding: 18px 28px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  border-bottom: 1px solid var(--border-color);
+  border-bottom: 1px solid var(--wm-border);
 }
 
-.modal-tag-row {
+.header-badges-row {
   display: flex;
   align-items: center;
   gap: 8px;
   flex-wrap: wrap;
 }
 
-.spec-badge {
-  background-color: var(--surface);
-  color: var(--ink-soft);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 11px;
-  border-radius: var(--radius-pill);
+.badge-year {
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  color: var(--wm-dark);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
 }
 
-.featured-badge {
-  background-color: var(--accent-soft);
-  color: var(--accent-ink);
-  font-size: 0.78rem;
+.badge-featured-modal {
+  background: var(--wm-brand-light);
+  color: var(--wm-brand);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
+  font-weight: 800;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(225, 29, 72, 0.2);
+}
+
+.badge-cat-modal {
+  background: #E2E8F0;
+  color: var(--wm-dark-muted);
+  font-family: var(--font-display);
+  font-size: 0.76rem;
   font-weight: 700;
-  padding: 4px 11px;
-  border-radius: var(--radius-pill);
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
 }
 
-.cat-badge {
-  background-color: var(--surface);
-  color: var(--ink-soft);
-  font-size: 0.78rem;
-  font-weight: 600;
-  padding: 4px 11px;
-  border-radius: var(--radius-pill);
-}
-
-.btn-close {
-  background-color: var(--surface);
-  color: var(--ink);
-  width: 30px;
-  height: 30px;
+.btn-close-wm {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  color: var(--wm-dark-muted);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 0.9rem;
-  border-radius: 50%;
+  font-size: 0.95rem;
+  font-weight: bold;
   transition: var(--transition-fast);
 }
 
-.btn-close:hover {
-  background-color: var(--ink);
+.btn-close-wm:hover {
+  background: var(--wm-dark);
   color: #FFFFFF;
 }
 
-.modal-title-banner {
-  padding: 22px 24px 0;
+/* Title Area */
+.modal-title-area {
+  padding: 24px 28px 16px;
+}
+
+.event-type-pretitle {
+  font-family: var(--font-display);
+  font-size: 0.74rem;
+  font-weight: 800;
+  color: var(--wm-brand);
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 6px;
 }
 
 .modal-event-title {
-  font-size: clamp(1.25rem, 2.2vw, 1.55rem);
-  font-weight: 600;
-  color: var(--ink);
+  font-size: clamp(1.4rem, 2.5vw, 1.85rem);
+  font-weight: 800;
+  color: var(--wm-dark);
   line-height: 1.3;
 }
 
-.modal-body {
-  padding: 22px 24px 24px;
+/* Body & Specs */
+.modal-body-wm {
+  padding: 0 28px 28px;
 }
 
 .specs-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 12px;
+  gap: 16px;
   margin-bottom: 24px;
 }
 
@@ -274,12 +275,13 @@ const googleCalendarUrl = computed(() => {
 }
 
 .spec-card {
-  background-color: var(--surface);
-  border-radius: var(--radius-md);
-  padding: 15px;
+  background: #F8FAFC;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
   display: flex;
   align-items: flex-start;
-  gap: 12px;
+  gap: 14px;
 }
 
 .spec-card-full {
@@ -287,71 +289,81 @@ const googleCalendarUrl = computed(() => {
 }
 
 .spec-icon-box {
-  width: 34px;
-  height: 34px;
-  background-color: var(--paper);
-  color: var(--ink);
-  border-radius: var(--radius-sm);
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-md);
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  color: var(--wm-brand);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  box-shadow: var(--shadow-sm);
 }
 
-.spec-details {
+.spec-info {
   display: flex;
   flex-direction: column;
 }
 
 .spec-label {
-  font-size: 0.76rem;
-  color: var(--text-muted);
+  font-family: var(--font-display);
+  font-size: 0.7rem;
+  font-weight: 800;
+  color: var(--wm-text-muted);
+  letter-spacing: 0.06em;
 }
 
-.spec-val {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--ink);
+.spec-value {
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--wm-dark);
   margin-top: 2px;
 }
 
-.spec-city-tag {
+.spec-city-sub {
   font-size: 0.82rem;
-  color: var(--text-muted);
-  margin-top: 3px;
+  color: var(--wm-text-body);
+  margin-top: 2px;
 }
 
-.maps-action-link {
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--accent);
-  margin-top: 8px;
+.maps-btn-link {
   display: inline-block;
+  font-family: var(--font-display);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--wm-brand);
+  margin-top: 6px;
+  text-decoration: underline;
 }
 
-.maps-action-link:hover {
-  color: var(--accent-dark);
+.maps-btn-link:hover {
+  color: var(--wm-brand-dark);
 }
 
-.modal-actions {
+/* Actions */
+.modal-actions-wm {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
 }
 
-.btn-block {
+.btn-action-block {
   width: 100%;
-  padding: 13px 20px;
-  font-size: 0.95rem;
+  padding: 14px;
+  font-size: 1rem;
+  border-radius: var(--radius-lg);
 }
 
-.secondary-actions-row {
+.secondary-btn-group {
   display: flex;
-  gap: 10px;
+  gap: 12px;
 }
 
-@media (max-width: 540px) {
-  .secondary-actions-row {
+@media (max-width: 580px) {
+  .secondary-btn-group {
     flex-direction: column;
   }
 }
@@ -360,12 +372,9 @@ const googleCalendarUrl = computed(() => {
   flex: 1;
 }
 
-.btn-dark {
-  background-color: var(--ink);
-  color: #FFFFFF;
-}
-
-.btn-dark:hover {
-  background-color: var(--accent);
+.btn-wm.is-saved {
+  border-color: var(--wm-brand);
+  color: var(--wm-brand);
+  background: var(--wm-brand-light);
 }
 </style>

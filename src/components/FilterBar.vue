@@ -1,108 +1,96 @@
 <template>
-  <div class="filter-section">
+  <div id="events-catalog" class="wm-filter-bar">
     <div class="container">
-      <div class="year-tabs-bar">
-        <span class="filter-headline">Tahun</span>
-        <div class="tabs-scroll-wrap">
-          <button
-            v-for="yr in years"
-            :key="yr"
-            class="tab-year-btn"
-            :class="{ active: selectedYear === yr }"
-            @click="$emit('update:selectedYear', yr)"
-          >
-            {{ yr }}
-          </button>
-        </div>
-      </div>
+      <div class="filter-bar-container">
+        <!-- Top Row: Year Pills -->
+        <div class="year-pills-row">
+          <div class="year-pills-label">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+              <line x1="16" y1="2" x2="16" y2="6"></line>
+              <line x1="8" y1="2" x2="8" y2="6"></line>
+              <line x1="3" y1="10" x2="21" y2="10"></line>
+            </svg>
+            <span>Tahun Race:</span>
+          </div>
 
-      <div class="filter-controls-card">
-        <div class="search-form-wrap">
-          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"></circle>
-            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-          </svg>
-          <input
-            type="text"
-            placeholder="Cari nama lomba, kota, atau jarak"
-            :value="searchQuery"
-            @input="$emit('update:searchQuery', $event.target.value)"
-            class="search-input"
-          />
-          <button
-            v-if="searchQuery"
-            class="search-clear-btn"
-            @click="$emit('update:searchQuery', '')"
-            aria-label="Hapus pencarian"
-          >
-            ✕
-          </button>
-        </div>
-
-        <div class="month-select-wrap">
-          <select
-            :value="selectedMonth"
-            @change="$emit('update:selectedMonth', $event.target.value)"
-            class="select-input"
-          >
-            <option value="">Semua bulan</option>
-            <option v-for="(mName, idx) in months" :key="idx + 1" :value="idx + 1">
-              {{ mName }}
-            </option>
-          </select>
-        </div>
-
-        <div class="action-controls-wrap">
-          <div class="view-mode-group">
+          <div class="year-pills-scroll">
             <button
-              class="view-btn"
+              v-for="y in availableYears"
+              :key="y"
+              class="year-pill"
+              :class="{ active: selectedYear === y }"
+              @click="$emit('update:selectedYear', y)"
+            >
+              {{ y }}
+            </button>
+          </div>
+        </div>
+
+        <!-- Bottom Row: Sub-Filters & View Mode Switcher -->
+        <div class="filter-controls-row">
+          <!-- Month Dropdown -->
+          <div class="filter-item-dropdown">
+            <select
+              :value="selectedMonth"
+              @change="$emit('update:selectedMonth', $event.target.value)"
+            >
+              <option value="">Semua Bulan (Jan - Des)</option>
+              <option v-for="(mName, idx) in monthsNames" :key="idx" :value="String(idx + 1)">
+                Bulan {{ mName }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Sort Order Dropdown -->
+          <div class="filter-sort-dropdown">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M3 6h18M6 12h12m-9 6h6"/>
+            </svg>
+            <select
+              :value="sortOrder"
+              @change="$emit('update:sortOrder', $event.target.value)"
+            >
+              <option value="upcoming">⚡ Terdekat dari Hari Ini (Mendatang)</option>
+              <option value="desc">🗓️ Tanggal Terjauh (Desember ➔ Januari)</option>
+              <option value="asc">📅 Awal Tahun (Januari ➔ Desember)</option>
+            </select>
+          </div>
+
+          <!-- Right: View Mode Toggle (Grid vs Timeline/List ala Ahotu) -->
+          <div class="view-mode-toggle">
+            <button
+              class="view-mode-btn"
               :class="{ active: viewMode === 'grid' }"
+              title="Tampilan Kartu Grid (World's Marathons)"
               @click="$emit('update:viewMode', 'grid')"
-              aria-label="Tampilan grid"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <rect x="3" y="3" width="7" height="7"></rect>
                 <rect x="14" y="3" width="7" height="7"></rect>
-                <rect x="3" y="14" width="7" height="7"></rect>
                 <rect x="14" y="14" width="7" height="7"></rect>
+                <rect x="3" y="14" width="7" height="7"></rect>
               </svg>
+              <span>Grid</span>
             </button>
+
             <button
-              class="view-btn"
-              :class="{ active: viewMode === 'table' }"
-              @click="$emit('update:viewMode', 'table')"
-              aria-label="Tampilan tabel"
+              class="view-mode-btn"
+              :class="{ active: viewMode === 'timeline' }"
+              title="Tampilan Kalender Timeline (Ahotu)"
+              @click="$emit('update:viewMode', 'timeline')"
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="6" x2="21" y2="6"></line>
-                <line x1="3" y1="12" x2="21" y2="12"></line>
-                <line x1="3" y1="18" x2="21" y2="18"></line>
+                <line x1="8" y1="6" x2="21" y2="6"></line>
+                <line x1="8" y1="12" x2="21" y2="12"></line>
+                <line x1="8" y1="18" x2="21" y2="18"></line>
+                <line x1="3" y1="6" x2="3.01" y2="6"></line>
+                <line x1="3" y1="12" x2="3.01" y2="12"></line>
+                <line x1="3" y1="18" x2="3.01" y2="18"></line>
               </svg>
+              <span>Timeline</span>
             </button>
           </div>
-
-          <button
-            class="btn-sort"
-            @click="$emit('toggle-sort')"
-            :title="sortOrder === 'asc' ? 'Urutkan dari terlama' : 'Urutkan dari terdekat'"
-          >
-            {{ sortOrder === 'asc' ? 'Terdekat dulu' : 'Terlama dulu' }}
-          </button>
-        </div>
-      </div>
-
-      <div class="category-tabs-bar">
-        <span class="filter-headline">Jarak</span>
-        <div class="category-scroll-wrap">
-          <button
-            v-for="cat in categories"
-            :key="cat.value"
-            class="category-tab-btn"
-            :class="{ active: selectedCategory === cat.value }"
-            @click="$emit('update:selectedCategory', cat.value)"
-          >
-            {{ cat.label }}
-          </button>
         </div>
       </div>
     </div>
@@ -110,13 +98,13 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   selectedYear: {
     type: String,
     default: '2026'
   },
   selectedMonth: {
-    type: [String, Number],
+    type: String,
     default: ''
   },
   selectedCategory: {
@@ -133,7 +121,7 @@ const props = defineProps({
   },
   sortOrder: {
     type: String,
-    default: 'asc'
+    default: 'upcoming'
   }
 });
 
@@ -141,233 +129,179 @@ defineEmits([
   'update:selectedYear',
   'update:selectedMonth',
   'update:selectedCategory',
-  'update:searchQuery',
+  'update:selectedQuery',
   'update:viewMode',
+  'update:sortOrder',
   'toggle-sort'
 ]);
 
-const years = ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018'];
+const availableYears = ['2026', '2025', '2024', '2023', '2022', '2021', '2020', '2019', '2018'];
 
-const months = [
+const monthsNames = [
   'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
   'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
-];
-
-const categories = [
-  { label: 'Semua kategori', value: 'all' },
-  { label: '5K', value: '5K' },
-  { label: '10K', value: '10K' },
-  { label: 'Half marathon (21K)', value: '21K' },
-  { label: 'Marathon (42K)', value: '42K' },
-  { label: 'Trail run', value: 'Trail' },
-  { label: 'Ultra marathon', value: 'Ultra' }
 ];
 </script>
 
 <style scoped>
-.filter-section {
-  padding: 8px 0 32px;
+.wm-filter-bar {
+  margin-bottom: 28px;
 }
 
-.filter-headline {
+.filter-bar-container {
+  background: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-xl);
+  padding: 18px 24px;
+  box-shadow: var(--shadow-card);
+}
+
+/* Year Pills */
+.year-pills-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid var(--wm-border-subtle);
+}
+
+.year-pills-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-display);
   font-size: 0.82rem;
-  font-weight: 600;
-  color: var(--text-muted);
-  white-space: nowrap;
-  min-width: 44px;
-}
-
-.year-tabs-bar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-bottom: 16px;
-}
-
-.tabs-scroll-wrap {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  overflow-x: auto;
-  padding-bottom: 4px;
-}
-
-.tab-year-btn {
-  font-size: 0.92rem;
-  font-weight: 500;
-  padding: 7px 14px;
-  background-color: transparent;
-  color: var(--text-body);
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
+  font-weight: 800;
+  color: var(--wm-dark-muted);
   white-space: nowrap;
 }
 
-.tab-year-btn:hover {
-  background-color: var(--surface);
+.year-pills-label svg {
+  color: var(--wm-brand);
 }
 
-.tab-year-btn.active {
-  background-color: var(--ink);
-  color: #FFFFFF;
-  font-weight: 600;
-}
-
-.filter-controls-card {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.search-form-wrap {
-  flex: 1;
-  min-width: 260px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  position: relative;
-  background: var(--paper);
-  border: 1px solid var(--border-color);
-  border-radius: var(--radius-pill);
-  padding: 0 14px;
-}
-
-.search-icon {
-  color: var(--text-muted);
-  flex-shrink: 0;
-}
-
-.search-input {
-  flex: 1;
-  width: 100%;
-  padding: 10px 0;
-  font-size: 0.92rem;
-  color: var(--ink);
-  background: transparent;
-}
-
-.search-input:focus {
-  outline: none;
-}
-
-.search-clear-btn {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  flex-shrink: 0;
-}
-
-.search-clear-btn:hover {
-  color: var(--accent);
-}
-
-.month-select-wrap {
-  position: relative;
-}
-
-.select-input {
-  padding: 10px 16px;
-  border: 1px solid var(--border-color);
-  background-color: var(--paper);
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--ink);
-  border-radius: var(--radius-pill);
-  cursor: pointer;
-}
-
-.select-input:focus {
-  outline: none;
-  border-color: var(--ink);
-}
-
-.action-controls-wrap {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.view-mode-group {
-  display: flex;
-  gap: 2px;
-  background: var(--surface);
-  border-radius: var(--radius-pill);
-  padding: 3px;
-}
-
-.view-btn {
-  padding: 7px 10px;
-  color: var(--text-muted);
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
-  display: flex;
-}
-
-.view-btn.active {
-  background-color: var(--paper);
-  color: var(--ink);
-  box-shadow: var(--shadow-subtle);
-}
-
-.btn-sort {
-  font-size: 0.85rem;
-  font-weight: 500;
-  padding: 9px 16px;
-  background-color: var(--paper);
-  border: 1px solid var(--border-color);
-  color: var(--ink);
-  border-radius: var(--radius-pill);
-  transition: var(--transition-fast);
-  white-space: nowrap;
-}
-
-.btn-sort:hover {
-  border-color: var(--ink);
-}
-
-.category-tabs-bar {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-}
-
-.category-scroll-wrap {
+.year-pills-scroll {
   display: flex;
   align-items: center;
   gap: 6px;
   overflow-x: auto;
-  padding-bottom: 4px;
+  padding-bottom: 2px;
 }
 
-.category-tab-btn {
-  font-size: 0.87rem;
-  font-weight: 500;
-  padding: 7px 14px;
-  background-color: var(--surface);
-  color: var(--ink-soft);
-  border-radius: var(--radius-pill);
+.year-pill {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  padding: 6px 14px;
+  border-radius: var(--radius-full);
+  background: #F8FAFC;
+  border: 1px solid var(--wm-border);
+  color: var(--wm-dark);
+  transition: var(--transition-fast);
   white-space: nowrap;
+}
+
+.year-pill:hover {
+  background: #FFFFFF;
+  border-color: var(--wm-brand);
+  color: var(--wm-brand);
+}
+
+.year-pill.active {
+  background: var(--wm-dark);
+  color: #FFFFFF;
+  border-color: var(--wm-dark);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Controls Row */
+.filter-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 14px;
+}
+
+.filter-item-dropdown select {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--wm-dark);
+  padding: 8px 14px;
+  background: #F8FAFC;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
   transition: var(--transition-fast);
 }
 
-.category-tab-btn:hover {
-  background-color: var(--accent-soft);
-  color: var(--accent-ink);
+.filter-item-dropdown select:hover {
+  border-color: var(--wm-brand);
 }
 
-.category-tab-btn.active {
-  background-color: var(--accent);
-  color: #FFFFFF;
+.filter-sort-dropdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-md);
+  padding: 0 12px;
+  transition: var(--transition-fast);
 }
 
-@media (max-width: 768px) {
-  .filter-controls-card {
-    flex-direction: column;
-    align-items: stretch;
-  }
-  .action-controls-wrap {
-    justify-content: space-between;
-  }
+.filter-sort-dropdown:hover {
+  border-color: var(--wm-brand);
+}
+
+.filter-sort-dropdown svg {
+  color: var(--wm-brand);
+  flex-shrink: 0;
+}
+
+.filter-sort-dropdown select {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--wm-dark);
+  padding: 8px 4px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+/* View Mode Switcher */
+.view-mode-toggle {
+  display: flex;
+  align-items: center;
+  background: #F1F5F9;
+  padding: 4px;
+  border-radius: var(--radius-md);
+  gap: 4px;
+}
+
+.view-mode-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
+  font-family: var(--font-display);
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--wm-text-muted);
+  transition: var(--transition-fast);
+}
+
+.view-mode-btn:hover {
+  color: var(--wm-dark);
+}
+
+.view-mode-btn.active {
+  background: #FFFFFF;
+  color: var(--wm-dark);
+  box-shadow: var(--shadow-sm);
 }
 </style>

@@ -1,3 +1,12 @@
+/**
+ * ==============================================================================
+ * Supabase Data Client with Automatic Local Fallback & Multi-Environment Support
+ * ------------------------------------------------------------------------------
+ * Mengelola koneksi ke PostgreSQL Supabase.
+ * Mendukung dev lokal dan deployment Netlify Functions.
+ * ==============================================================================
+ */
+
 require('dotenv').config();
 const fs = require('fs');
 const path = require('path');
@@ -23,6 +32,9 @@ if (SUPABASE_URL && SUPABASE_KEY) {
   }
 }
 
+/**
+ * Membaca data seed lokal dari data/seed.json dengan berbagai path resolusi (Netlify & Local)
+ */
 function getLocalSeedData() {
   const candidatePaths = [
     path.join(__dirname, '..', 'data', 'seed.json'),
@@ -47,6 +59,9 @@ function getLocalSeedData() {
   return [];
 }
 
+/**
+ * Mengambil daftar events dengan filter
+ */
 async function queryEvents(filters = {}) {
   const {
     year,
@@ -60,6 +75,7 @@ async function queryEvents(filters = {}) {
     sort = 'asc'
   } = filters;
 
+  // 1. Jika terhubung ke Supabase di cloud
   if (isConnectedToSupabase && supabase) {
     try {
       let query = supabase
@@ -75,7 +91,26 @@ async function queryEvents(filters = {}) {
         query = query.or(`title.ilike.%${search}%,location.ilike.%${search}%,category.ilike.%${search}%`);
       }
 
-      query = query.order('start_date', { ascending: sort === 'asc', nullsFirst: false });
+      const today = new Date().toISOString().split('T')[0]; // Current date e.g. '2026-09-10'
+      const isCurrentYear = (!year || parseInt(year) === 2026);
+
+      // Sorting handler
+      if (sort === 'upcoming') {
+        if (isCurrentYear && !month) {
+          // Event terdekat mulai dari hari ini ke depan
+          query = query
+            .gte('start_date', today)
+            .order('start_date', { ascending: true, nullsFirst: false });
+        } else {
+          query = query.order('start_date', { ascending: true, nullsFirst: false });
+        }
+      } else if (sort === 'desc') {
+        // Tanggal terjauh (Desember ke awal tahun)
+        query = query.order('start_date', { ascending: false, nullsFirst: false });
+      } else {
+        // Awal tahun (Januari ke Desember)
+        query = query.order('start_date', { ascending: true, nullsFirst: false });
+      }
 
       const from = (page - 1) * limit;
       const to = from + limit - 1;
@@ -100,6 +135,7 @@ async function queryEvents(filters = {}) {
     }
   }
 
+  // 2. Fallback: Filter data seed lokal secara cerdas
   let list = getLocalSeedData();
 
   if (year) {
@@ -127,11 +163,18 @@ async function queryEvents(filters = {}) {
     );
   }
 
-  list.sort((a, b) => {
-    const dateA = a.start_date || '9999-99-99';
-    const dateB = b.start_date || '9999-99-99';
-    return sort === 'asc' ? dateA.localeCompare(dateB) : dateB.localeCompare(dateA);
-  });
+  // Sorting fallback
+  const today = new Date().toISOString().split('T')[0];
+  const isCurrentYear = (!year || parseInt(year) === 2026);
+
+  if (sort === 'upcoming' && isCurrentYear && !month) {
+    list = list.filter(item => item.start_date && item.start_date >= today);
+    list.sort((a, b) => (a.start_date || '9999-99-99').localeCompare(b.start_date || '9999-99-99'));
+  } else if (sort === 'desc') {
+    list.sort((a, b) => (b.start_date || '9999-99-99').localeCompare(a.start_date || '9999-99-99'));
+  } else {
+    list.sort((a, b) => (a.start_date || '9999-99-99').localeCompare(b.start_date || '9999-99-99'));
+  }
 
   const total = list.length;
   const p = parseInt(page);
@@ -149,9 +192,13 @@ async function queryEvents(filters = {}) {
   };
 }
 
+/**
+ * Statistik ringkas kalender lari (Mendukung query langsung ke Supabase PostgreSQL)
+ */
 async function queryStats(selectedYear = null) {
   const year = selectedYear ? parseInt(selectedYear) : 2026;
 
+  // 1. Ambil dari Supabase jika online
   if (isConnectedToSupabase && supabase) {
     try {
       const { data: currentYearEvents, error } = await supabase
@@ -213,6 +260,7 @@ async function queryStats(selectedYear = null) {
     }
   }
 
+  // 2. Fallback jika Supabase offline: Hitung dari seed.json lokal
   const list = getLocalSeedData();
   const currentYearEvents = list.filter(e => e.year === year);
   

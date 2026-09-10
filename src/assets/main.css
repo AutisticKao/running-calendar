@@ -1,52 +1,85 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+/* ==============================================================================
+   WORLD'S MARATHONS & AHOTU ATHLETIC ENDURANCE DESIGN SYSTEM
+   Inspirasi: worldsmarathons.com & ahotu.com
+   Modern, Clean, Athletic, International Marathon Calendar Standards
+   ============================================================================== */
 
 :root {
-  --ink: #15171C;
-  --ink-soft: #5B5F68;
-  --ink-faint: #9497A0;
+  /* Brand Core Palette */
+  --wm-brand: #E11D48;            /* Electric Crimson / Race Red */
+  --wm-brand-dark: #BE123C;
+  --wm-brand-light: #FFF1F2;
+  --wm-brand-gradient: linear-gradient(135deg, #E11D48 0%, #FF385C 100%);
 
-  --paper: #FFFFFF;
-  --surface: #F6F5F1;
-  --surface-alt: #ECEAE3;
-  --border-color: #E3E1D9;
-  --border-strong: #CFCCC0;
+  /* Neutrals & Athletic Slate */
+  --wm-dark: #0F172A;             /* Slate 900 - Headings & Primary Text */
+  --wm-dark-soft: #1E293B;        /* Slate 800 */
+  --wm-dark-muted: #334155;       /* Slate 700 */
+  --wm-text-body: #475569;         /* Slate 600 */
+  --wm-text-muted: #94A3B8;        /* Slate 400 */
+  --wm-text-light: #CBD5E1;        /* Slate 300 */
 
-  --accent: #FF4B33;
-  --accent-dark: #DB3A22;
-  --accent-soft: #FFE7E1;
-  --accent-ink: #8A2313;
+  /* Backgrounds & Surfaces */
+  --wm-bg: #F8FAFC;               /* Crisp athletic off-white */
+  --wm-bg-alt: #F1F5F9;
+  --wm-surface: #FFFFFF;
+  --wm-surface-translucent: rgba(255, 255, 255, 0.9);
 
-  --trail: #0E8A5C;
-  --trail-soft: #DFF3E9;
-  --trail-ink: #0B5E40;
+  /* Borders */
+  --wm-border: #E2E8F0;
+  --wm-border-subtle: #F1F5F9;
+  --wm-border-focus: #E11D48;
 
-  --bg-main: var(--surface);
-  --bg-surface: var(--paper);
-  --bg-surface-alt: var(--surface-alt);
-  --text-primary: var(--ink);
-  --text-body: var(--ink-soft);
-  --text-muted: var(--ink-faint);
-  --text-white: #FFFFFF;
-  --border-dark: var(--ink);
-  --border-orange: var(--accent);
+  /* Color-Coded Distance Badges (Ahotu & World's Marathons standard) */
+  --cat-marathon-text: #4338CA;
+  --cat-marathon-bg: #EEF2FF;
+  --cat-marathon-border: #C7D2FE;
 
-  --font-heading: 'Space Grotesk', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  --cat-half-text: #0F766E;
+  --cat-half-bg: #F0FDFA;
+  --cat-half-border: #99F6E4;
 
-  --radius-sharp: 6px;
-  --radius-xs: 6px;
+  --cat-10k-text: #C2410C;
+  --cat-10k-bg: #FFF7ED;
+  --cat-10k-border: #FFEDD5;
+
+  --cat-5k-text: #047857;
+  --cat-5k-bg: #ECFDF5;
+  --cat-5k-border: #A7F3D0;
+
+  --cat-trail-text: #6D28D9;
+  --cat-trail-bg: #F5F3FF;
+  --cat-trail-border: #DDD6FE;
+
+  --cat-ultra-text: #9D174D;
+  --cat-ultra-bg: #FDF2F8;
+  --cat-ultra-border: #FBCFE8;
+
+  /* Typography */
+  --font-display: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+
+  /* Geometry & Radii (Refined, Athletic Modern) */
+  --radius-xs: 4px;
   --radius-sm: 8px;
   --radius-md: 12px;
   --radius-lg: 18px;
-  --radius-pill: 999px;
+  --radius-xl: 24px;
+  --radius-full: 9999px;
 
-  --shadow-subtle: 0 1px 2px rgba(21, 23, 28, 0.05);
-  --shadow-card: 0 2px 8px rgba(21, 23, 28, 0.06);
-  --shadow-hover: 0 10px 28px rgba(21, 23, 28, 0.12);
-  --transition-fast: 0.16s ease;
-  --transition-normal: 0.25s ease;
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-card: 0 4px 14px -2px rgba(15, 23, 42, 0.05), 0 2px 6px -1px rgba(15, 23, 42, 0.02);
+  --shadow-card-hover: 0 16px 32px -4px rgba(15, 23, 42, 0.1), 0 4px 12px -2px rgba(15, 23, 42, 0.04);
+  --shadow-dropdown: 0 12px 28px -4px rgba(15, 23, 42, 0.12);
+  --shadow-glow: 0 8px 20px -4px rgba(225, 29, 72, 0.3);
+
+  /* Transitions */
+  --transition-fast: 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+  --transition-smooth: 0.28s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Reset & Base */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -60,20 +93,21 @@ html {
 
 body {
   font-family: var(--font-body);
-  background-color: var(--bg-main);
-  color: var(--text-body);
-  line-height: 1.6;
+  background-color: var(--wm-bg);
+  color: var(--wm-text-body);
+  line-height: 1.55;
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
 }
 
+/* Headings with Athletic Typography */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-heading);
-  color: var(--text-primary);
-  font-weight: 600;
-  letter-spacing: -0.01em;
-  line-height: 1.2;
+  font-family: var(--font-display);
+  color: var(--wm-dark);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.25;
 }
 
 a {
@@ -88,11 +122,17 @@ button {
   background: none;
 }
 
+input, select {
+  font-family: inherit;
+  outline: none;
+}
+
+/* Container */
 .container {
   width: 100%;
-  max-width: 1200px;
+  max-width: 1240px;
   margin: 0 auto;
-  padding: 0 20px;
+  padding: 0 24px;
 }
 
 @media (max-width: 640px) {
@@ -101,61 +141,379 @@ button {
   }
 }
 
-.btn {
+/* ==============================================================================
+   World's Marathons Navigation Header (Sleek, Clean, Translucent)
+   ============================================================================== */
+.wm-navbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background-color: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--wm-border);
+  transition: var(--transition-fast);
+}
+
+.wm-nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 72px;
+}
+
+.wm-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.wm-logo-mark {
+  width: 40px;
+  height: 40px;
+  background: var(--wm-brand-gradient);
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #FFFFFF;
+  box-shadow: var(--shadow-glow);
+}
+
+.wm-brand-title {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 900;
+  color: var(--wm-dark);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.wm-brand-title span {
+  color: var(--wm-brand);
+}
+
+.wm-brand-tagline {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--wm-text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.wm-nav-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.wm-status-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  background-color: #F1F5F9;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-full);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--wm-dark-muted);
+}
+
+.wm-status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.btn-wm-wishlist {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #FFFFFF;
+  border: 1px solid var(--wm-border);
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--wm-dark);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-fast);
+}
+
+.btn-wm-wishlist:hover {
+  border-color: var(--wm-brand);
+  color: var(--wm-brand);
+  transform: translateY(-1px);
+}
+
+.wm-badge-counter {
+  background: var(--wm-brand);
+  color: #FFFFFF;
+  font-size: 0.75rem;
+  font-weight: 800;
+  padding: 1px 7px;
+  border-radius: var(--radius-full);
+  line-height: 1.4;
+}
+
+/* ==============================================================================
+   World's Marathons Athletic Buttons
+   ============================================================================== */
+.btn-wm {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  font-weight: 600;
+  font-family: var(--font-display);
+  font-weight: 700;
   font-size: 0.92rem;
   padding: 11px 22px;
-  border-radius: var(--radius-pill);
+  border-radius: var(--radius-md);
+  transition: var(--transition-fast);
+  white-space: nowrap;
+}
+
+.btn-wm-primary {
+  background: var(--wm-brand-gradient);
+  color: #FFFFFF;
+  box-shadow: var(--shadow-glow);
+}
+
+.btn-wm-primary:hover {
+  opacity: 0.94;
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px -4px rgba(225, 29, 72, 0.4);
+}
+
+.btn-wm-secondary {
+  background: #FFFFFF;
+  color: var(--wm-dark);
+  border: 1px solid var(--wm-border);
+}
+
+.btn-wm-secondary:hover {
+  background: #F8FAFC;
+  border-color: var(--wm-dark);
+  transform: translateY(-1px);
+}
+
+.btn-wm-dark {
+  background: var(--wm-dark);
+  color: #FFFFFF;
+}
+
+.btn-wm-dark:hover {
+  background: var(--wm-dark-soft);
+  transform: translateY(-1px);
+}
+
+/* ==============================================================================
+   Distance Category Badges (Pills)
+   ============================================================================== */
+.dist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.dist-badge.marathon, .dist-badge[data-cat="42K"] {
+  background-color: var(--cat-marathon-bg);
+  color: var(--cat-marathon-text);
+  border: 1px solid var(--cat-marathon-border);
+}
+
+.dist-badge.half, .dist-badge[data-cat="21K"] {
+  background-color: var(--cat-half-bg);
+  color: var(--cat-half-text);
+  border: 1px solid var(--cat-half-border);
+}
+
+.dist-badge.tenk, .dist-badge[data-cat="10K"] {
+  background-color: var(--cat-10k-bg);
+  color: var(--cat-10k-text);
+  border: 1px solid var(--cat-10k-border);
+}
+
+.dist-badge.fivek, .dist-badge[data-cat="5K"] {
+  background-color: var(--cat-5k-bg);
+  color: var(--cat-5k-text);
+  border: 1px solid var(--cat-5k-border);
+}
+
+.dist-badge.trail, .dist-badge[data-cat="trail"] {
+  background-color: var(--cat-trail-bg);
+  color: var(--cat-trail-text);
+  border: 1px solid var(--cat-trail-border);
+}
+
+.dist-badge.ultra, .dist-badge[data-cat="ultra"] {
+  background-color: var(--cat-ultra-bg);
+  color: var(--cat-ultra-text);
+  border: 1px solid var(--cat-ultra-border);
+}
+
+.dist-badge.default {
+  background-color: #F1F5F9;
+  color: var(--wm-dark);
+  border: 1px solid var(--wm-border);
+}
+
+/* ==============================================================================
+   Event Grid Cards & Layouts
+   ============================================================================== */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+@media (max-width: 640px) {
+  .events-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* ==============================================================================
+   Ahotu Style Timeline / List View
+   ============================================================================== */
+.events-timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.timeline-item {
+  display: grid;
+  grid-template-columns: 100px 1fr auto;
+  align-items: center;
+  gap: 20px;
+  background: var(--wm-surface);
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-lg);
+  padding: 18px 24px;
+  box-shadow: var(--shadow-card);
   transition: var(--transition-fast);
 }
 
-.btn-primary {
-  background-color: var(--accent);
-  color: #FFFFFF;
+.timeline-item:hover {
+  border-color: var(--wm-brand);
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
 }
 
-.btn-primary:hover {
-  background-color: var(--accent-dark);
+@media (max-width: 768px) {
+  .timeline-item {
+    grid-template-columns: 1fr;
+    gap: 14px;
+    padding: 18px;
+  }
 }
 
-.btn-secondary {
-  background: var(--paper);
-  border: 1px solid var(--border-color);
-  color: var(--ink);
+/* Date Block (Ahotu Style) */
+.date-block-ahotu {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #F8FAFC;
+  border: 1px solid var(--wm-border);
+  border-radius: var(--radius-md);
+  padding: 10px 12px;
+  min-width: 80px;
+  text-align: center;
 }
 
-.btn-secondary:hover {
-  border-color: var(--ink);
+.date-day {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 900;
+  color: var(--wm-dark);
+  line-height: 1;
 }
 
-.btn-dark {
-  background-color: var(--ink);
-  color: #FFFFFF;
+.date-month {
+  font-family: var(--font-display);
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--wm-brand);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-top: 3px;
 }
 
-.btn-dark:hover {
-  background-color: var(--accent);
+.date-year {
+  font-size: 0.68rem;
+  font-weight: 600;
+  color: var(--wm-text-muted);
 }
 
-.btn-block {
+/* ==============================================================================
+   Modal Components
+   ============================================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background-color: rgba(15, 23, 42, 0.6);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  animation: wmFadeIn 0.2s ease-out;
+}
+
+.modal-content {
+  background-color: #FFFFFF;
+  border-radius: var(--radius-xl);
+  max-width: 660px;
   width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: var(--shadow-modal);
+  border: 1px solid var(--wm-border);
+  animation: wmModalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+@keyframes wmFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes wmModalIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Custom Scrollbar */
 ::-webkit-scrollbar {
-  width: 7px;
-  height: 7px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-main);
+  background: var(--wm-bg);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--border-strong);
-  border-radius: var(--radius-pill);
+  background: #CBD5E1;
+  border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--ink-faint);
+  background: var(--wm-brand);
 }
